@@ -46,7 +46,8 @@ def get_time(file, solver):
     return user_time + system_time
 
 
-
+def log_value(n: int):
+    return round(math.log10(n), 2) if n > 0 else 0
 for file in glob.glob(dir_name):
     f = open(file, 'r')
     out_file.write("File: " + file + "\n")
@@ -55,6 +56,7 @@ for file in glob.glob(dir_name):
     clingo_time = None
     clingo_solution = False
     clingo_timeout = True
+    clingo_preprocessing_time = None
 
     marco_count = None
     marco_time = None
@@ -78,7 +80,10 @@ for file in glob.glob(dir_name):
             else:
                 clingo_count = int(l[-1])
                 clingo_timeout = False
-            clingo_mus_count_list.append(clingo_count)
+            clingo_mus_count_list.append(log_value(clingo_count))
+        elif line.startswith("Total execution (clock) time in seconds"):
+            l = line.split()
+            clingo_preprocessing_time = float(l[-1])
         elif line.startswith("[unimus] Complete enumeration: True"):
             unimus_timeout = False
         elif line.startswith("[marco] Complete enumeration: False"):
@@ -86,14 +91,14 @@ for file in glob.glob(dir_name):
         elif line.startswith("[unimus] The number of MUS:"):
             l = line.split()
             unimus_count = int(l[-1])
-            unimus_mus_count_list.append(unimus_count)
+            unimus_mus_count_list.append(log_value(unimus_count))
         elif line.startswith("[marco] The number of MUS:"):
             l = line.split()
             marco_count = int(l[-1])
-            marco_mus_count_list.append(marco_count)
+            marco_mus_count_list.append(log_value(marco_count))
 
 
-    clingo_time = get_time(file, "mus")
+    clingo_time = get_time(file, "mus") + clingo_preprocessing_time
     unimus_time = get_time(file, "unimus")
     marco_time = get_time(file, "marco")
     true_mus_count = None

@@ -65,6 +65,33 @@ line/.style={-latex}
 \title{Weekly Report}
 \begin{document}
 \date{13 March 2024}
+\section{New MUS Solver using Clingo}
+\paragraph{Experimental Results}
+\begin{table}[h]
+  \centering
+  \begin{tabular}{m{5em} m{5em} m{6em} m{10em}} 
+  \toprule
+  % & & \rotatebox{60}{\clingo} & \rotatebox{60}{DynASP} & \rotatebox{60}{Ganak}  & \rotatebox{60}{ApproxMC} & \rotatebox{60}{ApproxASP} \\ 
+   & marco & unimus & Clingo\\
+  \midrule
+  %6491 & 6379 & 7743 & 5183 & 6094 & 5599\\
+  \#Solved & 264 & 268 & 656\\
+  \midrule
+  PAR-$2$ & 5501 & 5480 & 2928\\
+  \bottomrule
+  \end{tabular}
+  \caption{The performance of different MUS solvers.}
+  \label{table:mus_counting_result}
+\end{table}
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.5]{images/countMUS.pdf}
+  \caption{The number of enumerated MUSes by different MUS solvers.}
+\end{figure}
+
+
+\newpage
 \section{Computing MUSes~\cite{LPMM2016} via Answer Set Programming}
 \paragraph{Variables:}
 \begin{itemize}
