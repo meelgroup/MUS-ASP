@@ -1,0 +1,98 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+% \usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+% \usepackage{algorithmic}
+\usepackage{cleveref}
+\usepackage{titling}
+\usepackage{flexisym}
+\usepackage{enumitem}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage[paper=a4paper,margin=1in]{geometry}
+\usepackage{scalerel,amssymb}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{listings}
+\lstset{
+  backgroundcolor=\color{backcolour},   
+  commentstyle=\color{codegreen},
+  keywordstyle=\color{magenta},
+  language = Prolog,
+  literate = {-}{-}1,
+  breaklines=true, 
+  numbers=left,
+  basicstyle=\sffamily,
+  %keywordstyle=\bfseries,
+  %morekeywords={reached,  in, source, sink,edge,node},
+}
+\usepackage{xcolor}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\usepackage{tikz}
+\usepackage{scalerel,amssymb}
+\usetikzlibrary{positioning, fit, calc, shapes.geometric}
+\tikzset{block/.style={draw, thick, text width=2cm , minimum height=1.3cm, align=center},   
+line/.style={-latex}     
+} 
+\algnewcommand\algorithmicforeach{\textbf{for each}}
+\algdef{S}[FOR]{ForEach}[1]{\algorithmicforeach\ #1\ \algorithmicdo}
+\def\mcirc{\mathbin{\scalerel*{\circ}{j}}}
+\def\msquare{\mathord{\scalerel*{\Box}{gX}}}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{example}{Example}
+\newtheorem{definition}{Definition}
+\newtheorem{remark}{Remark}
+\newtheorem{proof}{Proof}
+\newcommand{\m}{\mathcal{M}}
+\newcommand{\mzero}{\mathcal{M}_0}
+\newcommand{\mone}{\mathcal{M}_1}
+\newcommand{\program}{\mathcal{P}}
+\newcommand{\copyatom}[1]{#1\textprime}
+\newcommand{\mmodel}[1]{\mathsf{MM}(#1)}
+\newcommand{\Card}[1]{|#1|}
+\newcommand{\Var}[1]{\mathsf{Var}(#1)}
+\newcommand{\minimal}[1]{\mathsf{MM}(#1)}
+\newcommand{\answer}[1]{\mathsf{AS}(#1)}
+\title{Weekly Report}
+\begin{document}
+\date{13 March 2024}
+\section{Computing MUSes~\cite{LPMM2016} via Answer Set Programming}
+\paragraph{Variables:}
+\begin{itemize}
+    \item For each clause $c$, introduce a variable $d(c)$
+    \item For each variable $x$, introduce two variables $p(x)$ and $n(x)$
+\end{itemize}
+\paragraph{Rules:}
+\begin{itemize}
+    \item for each clause $\neg{\ell_1} \vee \ldots \vee 
+    \neg{\ell_k} \vee \ell_{k+1} \vee \ldots \vee \ell_{k+m}$, 
+    introduce a rule as follows:\\
+    $u \leftarrow n(\ell_1), \ldots, n(\ell_k), p(\ell_{k+1}), p(\ell_{k+m}), d(c)$\\
+    $u$ is true denotes that at least one of the clauses is satisfied.
+    \item add a rule: $\leftarrow \textsf{not } u.$,
+    which means that at least one of the clauses is unsatisfiable
+    \item for each variable $x$, add a disjunctive rule: $p(x) ; n(x).$\\
+    which denotes that each variable must be assigned to at least one of the values.
+    \item for each variable $x$, add two rules: $p(x) \leftarrow u$ and $n(x) \leftarrow u$\\
+    which denotes at least one of the clauses is UNSAT even after trying out all possible combinations of variables.
+\end{itemize}
+\paragraph{One-to-one correspondence between MUS and answer sets.}
+Each of the $d(i)$-subset minimal models of the ASP program is a MUS of the original formula. 
+
+
+\bibliography{main} 
+\bibliographystyle{apalike}
+\end{document}
+
+
+
+
