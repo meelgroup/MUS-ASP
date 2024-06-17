@@ -66,6 +66,28 @@ line/.style={-latex}
 \begin{document}
 \date{13 March 2024}
 \section{New MUS Solver using Clingo}
+\section{Computing MUSes~\cite{LPMM2016} via Answer Set Programming}
+\paragraph{Variables:}
+\begin{itemize}
+    \item For each clause $c$, introduce a variable $d(c)$
+    \item For each variable $x$, introduce two variables $p(x)$ and $n(x)$
+\end{itemize}
+\paragraph{Rules:}
+\begin{itemize}
+    \item for each clause $\neg{\ell_1} \vee \ldots \vee 
+    \neg{\ell_k} \vee \ell_{k+1} \vee \ldots \vee \ell_{k+m}$, 
+    introduce a rule as follows:\\
+    $u \leftarrow n(\ell_1), \ldots, n(\ell_k), p(\ell_{k+1}), p(\ell_{k+m}), d(c)$\\
+    $u$ is true denotes that at least one of the clauses is satisfied.
+    \item add a rule: $\leftarrow \textsf{not } u.$,
+    which means that at least one of the clauses is unsatisfiable
+    \item for each variable $x$, add a disjunctive rule: $p(x) ; n(x).$\\
+    which denotes that each variable must be assigned to at least one of the values.
+    \item for each variable $x$, add two rules: $p(x) \leftarrow u$ and $n(x) \leftarrow u$\\
+    which denotes at least one of the clauses is UNSAT even after trying out all possible combinations of variables.
+\end{itemize}
+\paragraph{One-to-one correspondence between MUS and answer sets.}
+Each of the $d(i)$-subset minimal models of the ASP program is a MUS of the original formula. 
 \paragraph{Experimental Results}
 \begin{table}[h]
   \centering
