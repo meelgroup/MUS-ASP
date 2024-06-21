@@ -27,20 +27,21 @@ if args.alg == "unimus":
     # finally writing down the statistics
     print("The statistics of {0}".format(args.alg))
     print("The last time of enumeration: {0}".format(last_time_enumeration))
-    print("[{0}] The number of MUS: {1}".format(args.alg, number_of_mus))
-    print("[{0}] Complete enumeration: {1}".format(args.alg, enumeration_completed))
+    print("=> {0} The number of MUS: {1}".format(args.alg, number_of_mus))
+    print("=> {0} Complete enumeration: {1}".format(args.alg, enumeration_completed))
 
 elif args.alg == "marco":
+    enumeration_completed = True
     for line in open(output_filename):
-        if line.strip() == "U":
+        if line.strip().startswith("U "):
             number_of_mus += 1
         elif not line.startswith("Time limit reached"):
-            enumeration_completed = True
+            enumeration_completed = False
 
     # finally writing down the statistics
     print("The statistics of {0}".format(args.alg))
-    print("[{0}] The number of MUS: {1}".format(args.alg, number_of_mus))
-    print("[{0}] Complete enumeration: {1}".format(args.alg, enumeration_completed))
+    print("=> {0} The number of MUS: {1}".format(args.alg, number_of_mus))
+    print("=> {0} Complete enumeration: {1}".format(args.alg, enumeration_completed))
 
 # compress the file
 os.system("xz -f {0}".format(output_filename))
