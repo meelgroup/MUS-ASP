@@ -33,9 +33,9 @@ if args.alg == "unimus":
 elif args.alg == "marco":
     enumeration_completed = True
     for line in open(output_filename):
-        if line.strip().startswith("U "):
+        if line.strip().startswith("U"):
             number_of_mus += 1
-        elif not line.startswith("Time limit reached"):
+        elif line.startswith("Time limit reached"):
             enumeration_completed = False
 
     # finally writing down the statistics
