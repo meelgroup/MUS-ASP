@@ -10,7 +10,7 @@ args = parser.parse_args()
 number_of_mus = 0
 enumeration_completed = False
 output_filename = args.alg + "-" + args.i + ".out"
-if args.alg == "unimus":
+if args.alg == "unimus" or args.alg == "remus":
     last_time_enumeration = None
     for line in open(output_filename):
         if line.strip().startswith("Found MUS"):

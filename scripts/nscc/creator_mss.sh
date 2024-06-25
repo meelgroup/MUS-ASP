@@ -63,6 +63,7 @@ cp -r ${PBS_O_WORKDIR}//wrappers/* .
 cp ${PBS_O_WORKDIR}//gringo .
 cp ${PBS_O_WORKDIR}//cmodels .
 cp ${PBS_O_WORKDIR}//mcsmus .
+cp ${PBS_O_WORKDIR}//must .
 cp ${PBS_O_WORKDIR}//unimus .
 cp ${PBS_O_WORKDIR}//d4 .
 
@@ -111,6 +112,12 @@ do
             todo="~/anaconda3/envs/kc/bin/python check_num_of_mus.py -i ${filename} -a unimus >> result-${filename}.out 2>&1"
             echo "$todo" >> todo
 
+            todo="/usr/bin/time --verbose -o remus_${filename}.timeout ./must -a remus ${filename} >> remus-${filename}.out 2>&1"
+            echo "$todo" >> todo
+
+            todo="~/anaconda3/envs/kc/bin/python check_num_of_mus.py -i ${filename} -a remus >> result-${filename}.out 2>&1"
+            echo "$todo" >> todo
+
             todo="/usr/bin/time --verbose -o wrapper_${filename}.timeout ~/anaconda3/envs/kc/bin/python counter.py ${filename} >> result-${filename}.out 2>&1"
             echo "$todo" >> todo
 
@@ -128,7 +135,7 @@ do
     done
     let at_opt=at_opt+1
 done
-todoper=10
+todoper=12
 
 # create per-core todos
 echo "The total number of benchmarks: $numlines"
