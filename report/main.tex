@@ -18,6 +18,7 @@
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{listings}
+\usepackage{xspace}
 \lstset{
   backgroundcolor=\color{backcolour},   
   commentstyle=\color{codegreen},
@@ -55,7 +56,10 @@ line/.style={-latex}
 \newcommand{\m}{\mathcal{M}}
 \newcommand{\mzero}{\mathcal{M}_0}
 \newcommand{\mone}{\mathcal{M}_1}
-\newcommand{\program}{\mathcal{P}}
+\newcommand{\program}[1]{\mathcal{P}(#1)}
+\newcommand{\body}[1]{\mathsf{Body}(#1)}
+\newcommand{\true}{\ensuremath{\mathsf{true}}\xspace}
+\newcommand{\false}{\ensuremath{\mathsf{false}}\xspace}
 \newcommand{\copyatom}[1]{#1\textprime}
 \newcommand{\mmodel}[1]{\mathsf{MM}(#1)}
 \newcommand{\Card}[1]{|#1|}
@@ -65,6 +69,36 @@ line/.style={-latex}
 \title{Weekly Report}
 \begin{document}
 \date{13 March 2024}
+\section{Methodology}
+\begin{lstlisting}[caption={Program $\program{F}$},label={code:as_to_uc},captionpos=b,mathescape=true,escapechar=|,float]
+  % for each variable X
+  pos(X) $\vee$ neg(X) $\leftarrow$ v(X).|\label{line:each_variable}|
+  % for each clause $C_i = \ell_1 \vee \ldots \ell_{k} \vee \neg{\ell_{k+1}} \vee \ldots \neg{\ell_{k+m}}$
+  unsat $\leftarrow$ c(i), neg($\ell_1$), $\ldots$, neg($\ell_k$), pos($\ell_{k+1}$), $\ldots$, pos($\ell_{k+m}$).|\label{line:reach1}|
+  % at least one clause must be falsified
+  $\leftarrow$ not unsat.|\label{line:unsat}|
+  % for each variable X
+  pos(X) $\leftarrow$ unsat.
+  neg(X) $\leftarrow$ unsat.
+  % each c(i) is a free variable
+  $\{$ c(i) $\}.$
+\end{lstlisting}
+\begin{lemma}
+  Each answer set $\sigma \in \answer{\program{F}}$ one-to-one corresponds to an unsatisfiable core of $F$.
+\end{lemma}
+\begin{proof}
+  The lemma has two parts to proof:
+  \begin{enumerate}
+    \item For each $\sigma \in \answer{\program{F}}$, $\sigma_{\downarrow c/1}$ corresponds to an unsatisfiable core of $F$
+    \item Each unsatisfiable core $U$ of $F$ corresponds to an answer set of $\program{F}$ 
+  \end{enumerate}
+  Proof of `part $1$': For an answer set $\sigma \in \answer{\program{F}}$, let assume $\sigma_{\downarrow c/1} = \{c_{i_1}, \ldots, c_{i_k}\}$.
+  We proof that the clause set of $\sigma_{\downarrow c/1}$ constitutes an unsatisfiable core of $F$.
+
+  Under answer set semantics, unsat $\in \sigma$ (line~\ref{line:unsat} of encoding~\ref{code:as_to_uc}) and $\forall x \in \Var{F}$, $\{pos(x), neg(x)\} \subset \sigma$.
+  Under clark completion semantics, since unsat $\in \sigma$, $\exists r \in \program{F}$ such that 
+  $\body{r}$ is evaluated to $\true$. 
+\end{proof}
 \section{New MUS Solver using Clingo}
 \section{Computing MUSes~\cite{LPMM2016} via Answer Set Programming}
 \paragraph{Variables:}
