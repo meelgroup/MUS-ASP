@@ -1,0 +1,48 @@
+\usepackage{cleveref}
+\usepackage{flexisym}
+\usepackage{enumitem}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xspace}
+\lstset{
+  backgroundcolor=\color{backcolour},   
+  commentstyle=\color{codegreen},
+  keywordstyle=\color{magenta},
+  language = Prolog,
+  literate = {-}{-}1,
+  breaklines=true, 
+  numbers=left,
+  basicstyle=\sffamily,
+  %keywordstyle=\bfseries,
+  %morekeywords={reached,  in, source, sink,edge,node},
+}
+\usepackage{xcolor}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{example}{Example}
+\newtheorem{definition}{Definition}
+\newtheorem{remark}{Remark}
+\newtheorem{proof}{Proof}
+
+\newcommand{\unsat}{\ensuremath{\mathsf{unsat}}}
+\newcommand{\pos}[1]{\ensuremath{\mathsf{pos}(#1)}}
+\newcommand{\ngt}[1]{\ensuremath{\mathsf{neg}(#1)}}
+\newcommand{\cls}[1]{\ensuremath{\mathsf{c}(#1)}}
+\newcommand{\vrbl}[1]{\ensuremath{\mathsf{v}(#1)}}
+\newcommand{\program}[1]{\mathcal{P}(#1)}
+\newcommand{\body}[1]{\mathsf{Body}(#1)}
+\newcommand{\true}{\ensuremath{\mathsf{true}}\xspace}
+\newcommand{\false}{\ensuremath{\mathsf{false}}\xspace}
+\newcommand{\copyatom}[1]{#1\textprime}
+\newcommand{\mmodel}[1]{\mathsf{MM}(#1)}
+\newcommand{\Card}[1]{|#1|}
+\newcommand{\Var}[1]{\mathsf{Var}(#1)}
+\newcommand{\clarknot}{\ensuremath{\mathsf{not}}\text{ }}
+\newcommand{\answer}[1]{\mathsf{AS}(#1)}
