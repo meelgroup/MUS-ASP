@@ -70,6 +70,7 @@ line/.style={-latex}
 \newcommand{\mmodel}[1]{\mathsf{MM}(#1)}
 \newcommand{\Card}[1]{|#1|}
 \newcommand{\Var}[1]{\mathsf{Var}(#1)}
+\newcommand{\clarknot}{\ensuremath{\mathsf{not}}\text{ }}
 %% upto now
 \newcommand{\minimal}[1]{\mathsf{MM}(#1)}
 \newcommand{\answer}[1]{\mathsf{AS}(#1)}
@@ -103,7 +104,7 @@ The ASP program $\program{F}$ involves introducing some ASP atoms as follows:
   $\pos{x} \leftarrow \unsat$.
   $\ngt{x} \leftarrow \unsat$.
   % for each clause $C_i$, there is one free variable
-  $\{ \cls{i} \}.$
+  $\{ \cls{1}\text{ }; \ldots \text{ }\cls{n} \}.$|\label{line:all_clauses}|
 \end{lstlisting}
 \begin{lstlisting}[caption={Reduct of $\program{F}$ w.r.t. $M$},label={code:program_to_reduct},captionpos=b,mathescape=true,escapechar=|,float]
   % for each variable $x \in X$
@@ -122,10 +123,7 @@ More specifically, if $\cls{i} \in M$ then clause $C_i$ is considered by interpr
 We use the notation $M_{\downarrow \cls{.}}$ to denote the considered clauses under an interpretation. 
 With the above set of atoms, given a Boolean formula $F = \bigwedge_{i=1}^{n} C_i$, we introduce an ASP program $\program{F}$ such that each of the unsatisfiable cores of $F$ one-to-one corresponds to answer sets of $\program{F}$. 
 The ASP program $\program{F}$ is introduced in Listings~\ref{code:as_to_uc}. 
-Moreover, we analyze the reduct of $\program{F}$, which is important for the theoretical analysis of the encoding. 
-
-
-The theoretical guarantee of the program is established in~\Cref{lemma:as_to_uc_proof}.
+Moreover, we analyze the reduct of $\program{F}$, which is important for the theoretical analysis of the encoding. The theoretical guarantee of the program is established in~\Cref{lemma:as_to_uc_proof}.
 \begin{lemma}
   \label{lemma:as_to_uc_proof}
   Each answer set $\sigma \in \answer{\program{F}}$ one-to-one corresponds to an unsatisfiable core of $F$.
@@ -159,6 +157,33 @@ The theoretical guarantee of the program is established in~\Cref{lemma:as_to_uc_
   Moreover, $\unsat \in \sigma$ implies that $\forall x \in \Var{F}$, both $\pos{x}$ and $\ngt{x}$ are also justified.
   Since each atom within $\sigma$ is justified, $\sigma$ is a minimal model of $\program{F}^{\sigma}$. It completes the proof. 
 \end{proof}
+The encoding~\ref{code:as_to_uc} computes all unsatisfiable cores of $F$ via a reduction to answer set solving. Thus, all subset minimal answer sets 
+with respect to $\cls{.}$ corresponds to minimal unsatisfiable subsets of $F$.
+\begin{proposition}
+The subset minimal answer set of $\program{F}$ w.r.t. $\cls{.}$ correspondences to MUS of $F$.
+\end{proposition}
+
+\subsection{Optimizations to MUS Computation}
+With Encoding~\ref{code:as_to_uc}, we add some additional constraints to speed up the MUS computation. 
+The optimization techniques stem from the observations exploited in counting MUSes~\cite{BM2021}.
+In this paper, we use some of their observations in computing MUSes. 
+
+\paragraph{Minimum and Maximum Size of MUSes.}
+If we can compute a minimum (or a lower bound) and maximum (or an upper bound) size of MUSes, then we can encode the cardinality information as an ASP cardinality constraints to reduce the search space of answer sets. 
+We employ the same techniques exploited in~\cite{BM2021} to compute a lower and upper bound on the sizes of MUSes and modify the choice rule (Line~\ref{line:all_clauses} of Encoding~\ref{code:as_to_uc}) to a cardinality rule. 
+
+\paragraph{Component Decompositions.}
+Bendik and Meel~\cite{BM2021} partitions the clauses into {\em disjoint components} such that each clause of a MUS comes from the same component. 
+The computation of disjoint components involves constructing a graph, similar to {\em flip graph}, which is often used in MUS extraction~\cite{Wieringa2012}.
+To reduce the search space using the idea of disjoint components, our encoding adds a constraint as: $\leftarrow \cls{i}, \cls{j}$, for any two clauses $C_i$ and $C_j$ from two different components.   
+
+\paragraph{Hitting Set Duality.}
+Each of MUS of $F$ is a {\em minimal hitting set} of all of its MCSes~\cite{DW1987,Reiter1987}.
+Thus, each MUS of $F$ contains some clauses from each MCS. 
+This observation is also exploited by~\cite{BM2021} and similar to that, we compute the MCS of a formula with some time limit. 
+To exploit the hitting set duality, we add a constraint as $\leftarrow \clarknot \cls{i_1}, \ldots, \clarknot \cls{i_k}$, 
+where the clause set $C_{i_1}, \ldots, C_{i_k}$ constitutes an MCS of $F$.
+
 \section{New MUS Solver using Clingo}
 \section{Computing MUSes~\cite{LPMM2016} via Answer Set Programming}
 \paragraph{Variables:}
