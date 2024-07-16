@@ -1,0 +1,17 @@
+\section{Preliminaries}
+\label{section:preliminaries}
+In this section, we present the background knowledge from propositional logic and answer set programming to understand the technical contribution of our paper. 
+
+In propositional logic, a \emph{propositional variable} $v$ takes a value from the domain $\be = \{0,1\}$, equivalently $\{\mathsf{false}, \mathsf{true}\}$. 
+A \emph{literal} $\ell$ is either a variable $v$ (positive literal) or its negation $\neg{v}$ (negative literal).
+A \emph{clause} $C$ is a {\em disjunction} of literals, denoted as $C = \bigvee_{i} \ell_i$. 
+%A clause with a single literal is called a \emph{unit clause}.
+A Boolean formula $F$, in \emph{Conjunctive Normal Form (CNF)}, is a {\em conjunction}
+of clauses, represented as $F = \bigwedge_{j} C_j$. We use the notation $\Var{F}$ to denote the set of propositional atoms or variables within  
+$F$. 
+
+An assignment $\tau$ is a mapping $\tau: X \rightarrow \{0,1\}$, where $X \subseteq \Var{F}$.  For a variable $v \in X$, we define
+$\tau(\neg{v}) = 1 - \tau(v)$. 
+An assignment $\tau$ satifies a literal $\ell$, denoted as $\tau \models \ell$, if $\tau$ evaluates $\ell$ to \true.
+Similarly, an assignment $\tau$ satifies a clause $C$, denoted as $\tau \models C$, if $\tau$ evaluates one of its literals to \true.
+The assignment $\tau$ over $\Var{F}$ is a {\em model} of $F$ if $\tau$ evaluates $F$ to be \true. 

@@ -4,6 +4,14 @@ To evaluate our prototype~\toolname, we conducted a detailed experimental evalua
 The objective of the experimental evaluation is to evaluate the performance of \toolname~with the existing MUS enumerators.
 
 \paragraph{Benchmark and Baseline}
-Our benchmark set comes from two domains.
+We collected our benchmark from two areas:~(i)~MUS track of the SAT $2011$ competition~(ii)~scalable benchmark\footnote{\url{https://gitlab.com/satisfiability/scalablesat}} 
+from MUS counting~\cite{BM2020}. We compare our prototype with three MUS enumeration tools: 
+~(i)~\marco~\cite{LPMM2016}~(ii)~\unimus~\cite{BC2020}~and~(iii)~\remus~\cite{BCB2018}.
+
+\paragraph{Environmental Settings}
+All experiments were conducted on a high-performance computing cluster equipped with nodes featuring AMD EPYC $7713$ CPUs, each with $128$ real cores. 
+%We imposed a runtime limit of 5000 seconds and a memory cap of 16GB for each experiment.
+%All experiments were carried out on a high-performance computer cluster, where each node consists of AMD EPYC $7713$ CPUs running with $128$ real cores. 
+Throughout the experiment, the runtime and memory limits were set to $3600$ seconds and $16$GB, respectively, for all considered tools.
 
 
