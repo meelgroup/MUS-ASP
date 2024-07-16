@@ -1,6 +1,6 @@
 \section{Methodology}
 In this section, for a given Boolean formula $F$, we introduce an ASP program where each answer set of the program correspondences to the unsatisfiable cores of $F$.
-Finally, we introduce some optimization techniques to improve computational efficiency.  
+Finally, we introduce some optimization techniques to improve the computational efficiency.  
 \subsection{ASP Encoding}
 For a given Boolean formula $F$, we introduce an ASP program $\program{F}$.
 The ASP program $\program{F}$ involves introducing some ASP atoms as follows:
@@ -14,7 +14,8 @@ The ASP program $\program{F}$ involves introducing some ASP atoms as follows:
   a variable cannot be assigned both values simultaneously, in our program $\program{F}$, it is likely that some its interpretations contains both $\pos{x}$ and $\neg{x}$ simultaneously. 
   \item $\unsat$: we introduce an atom $\unsat$ to denote that at least one of the under consideration clauses is unsatisfied.
 \end{itemize}
-\begin{lstlisting}[caption={Program $\program{F}$},label={code:as_to_uc},captionpos=b,mathescape=true,escapechar=|,float]
+\begin{figure*}
+\begin{lstlisting}[caption={Program $\program{F}$},label={code:as_to_uc},captionpos=b,mathescape=true,escapechar=|,xleftmargin=0.5cm]
   % for each variable $x \in X$
   $\pos{x} \vee \ngt{x}$.|\label{line:each_variable}|
   % for each clause $C_i = x_1 \vee \ldots x_{k}, \vee \neg{x_{k+1}} \vee \ldots \neg{x_{k+m}}$
@@ -27,7 +28,7 @@ The ASP program $\program{F}$ involves introducing some ASP atoms as follows:
   % for each clause $C_i$, there is one free variable
   $\{ \cls{1}\text{ }; \ldots \text{ }\cls{n} \}.$|\label{line:all_clauses}|
 \end{lstlisting}
-\begin{lstlisting}[caption={Reduct of $\program{F}$ w.r.t. $M$},label={code:program_to_reduct},captionpos=b,mathescape=true,escapechar=|,float]
+\begin{lstlisting}[caption={Reduct of $\program{F}$ w.r.t. $M$},label={code:program_to_reduct},captionpos=b,mathescape=true,escapechar=|,xleftmargin=0.5cm]
   % for each variable $x \in X$
   $\pos{x} \vee \ngt{x}$|\label{line:each_variable}|
   % for each clause $C_i \in M$
@@ -35,9 +36,10 @@ The ASP program $\program{F}$ involves introducing some ASP atoms as follows:
   % for each variable X
   $\pos{x} \vee \neg \unsat$
   $\ngt{x} \vee \neg \unsat$
-  % for each clause $c_i \in M$
+  % for each clause $C_i \in M$
   $\cls{i}$
 \end{lstlisting}
+\end{figure*}
 
 Among the atoms of $\program{F}$, the atom $\cls{i}$ correspondences to clause $C_i \in F$. 
 An interpretation $M$ over the atoms of $\program{F}$ considers a set of clauses of $F$.
@@ -90,18 +92,23 @@ With Encoding~\ref{code:as_to_uc}, we add some additional constraints to speed u
 The optimization techniques stem from the observations exploited in counting MUSes~\cite{BM2021}.
 In this paper, we use some of their observations in computing MUSes. 
 
-\paragraph{Minimum and Maximum Size of MUSes.}
+\paragraph{Union of MUSes}
+If we can compute a union of MUSes or an over-approximation of MUSes, 
+then we can consider only those clauses for MUS computation. 
+Following the work~\cite{BM2021}, we exploited a MaxSAT based approach to compute the over-approximation of all MUSes~\cite{MIMML2014}.   
+
+\paragraph{Minimum and Maximum Size of MUSes}
 If we can compute a minimum (or a lower bound) and maximum (or an upper bound) size of MUSes, then we can encode the cardinality information as an ASP cardinality constraints to reduce the search space of answer sets. 
 We employ the same techniques exploited in~\cite{BM2021} to compute a lower and upper bound on the sizes of MUSes and modify the choice rule (Line~\ref{line:all_clauses} of Encoding~\ref{code:as_to_uc}) to a cardinality rule. 
 
-\paragraph{Component Decompositions.}
+\paragraph{Component Decompositions}
 Bendik and Meel~\cite{BM2021} partitions the clauses into {\em disjoint components} such that each clause of a MUS comes from the same component. 
 The computation of disjoint components involves constructing a graph, similar to {\em flip graph}, which is often used in MUS extraction~\cite{Wieringa2012}.
 To reduce the search space using the idea of disjoint components, our encoding adds a constraint as: $\leftarrow \cls{i}, \cls{j}$, for any two clauses $C_i$ and $C_j$ from two different components.   
 
-\paragraph{Hitting Set Duality.}
-Each of MUS of $F$ is a {\em minimal hitting set} of all of its MCSes~\cite{DW1987,Reiter1987}.
-Thus, each MUS of $F$ contains some clauses from each MCS. 
-This observation is also exploited by~\cite{BM2021} and similar to that, we compute the MCS of a formula with some time limit. 
-To exploit the hitting set duality, we add a constraint as $\leftarrow \clarknot \cls{i_1}, \ldots, \clarknot \cls{i_k}$, 
-where the clause set $C_{i_1}, \ldots, C_{i_k}$ constitutes an MCS of $F$.
+\paragraph{Hitting Set Duality}
+Each of MUS of $F$ is a {\em minimal hitting set} of all of its MCSes~\cite{DW1987}\cite{Reiter1987}.
+Thus, each MUS of $F$ contains some clauses from each of the MCSes. 
+This observation is also exploited by~\cite{BM2021} and similar to their approach, we compute the MCS of a formula with some time limit. 
+To exploit the hitting set duality, we add constraints as: $\leftarrow \clarknot \cls{i_1}, \ldots, \clarknot \cls{i_k}$, 
+where the clauses $C_{i_1}, \ldots, C_{i_k}$ constitutes an MCS of $F$.
