@@ -13,7 +13,7 @@ opts_arr=(" -t 5000 -cs 2000 ")
 output="initial"
 tlimit="3600"
 #4GB mem limit
-memlimit="8000000"
+memlimit="16000000"
 numthreads=$((OMPI_COMM_WORLD_SIZE))
 
 ################
@@ -94,8 +94,8 @@ do
             todo="python compute_to_mus.py -i ${filename} >> result-${filename}.out 2>&1"
             echo "$todo" >> todo
 
-            # todo="/usr/bin/time --verbose -o clingo_${filename}.timeout clingo --enum-mode=domRec --heuristic=domain -n 0 -q --time-limit=3600 clingo_${filename} >> result-${filename}.out 2>&1"
-            # echo "$todo" >> todo
+            todo="/usr/bin/time --verbose -o clingo_${filename}.timeout clingo --enum-mode=domRec --heuristic=domain -n 0 -q --time-limit=3600 clingo_${filename} >> result-${filename}.out 2>&1"
+            echo "$todo" >> todo
 
             # todo="timeout 3600s ./mcsmus -all-cores ${filename} >> result-${filename}.out 2>&1"
             # echo "$todo" >> todo
@@ -135,7 +135,70 @@ do
     done
     let at_opt=at_opt+1
 done
-todoper=12
+filespos="competition/"
+files=$(ls ${PBS_O_WORKDIR}//${filespos}/*.xz | shuf --random-source=${PBS_O_WORKDIR}//myrnd)
+for opts in "${opts_arr[@]}"
+do
+    mkdir -p "${output}" || exit
+    mkdir -p "${resultDir}" || exit
+    for file in $files
+    do
+        zipfilename=$(basename "$file")
+        filename=${zipfilename%.xz}
+        # filename=$(basename "$file")
+        # does the file run earlier
+        if [[ ! -f "${PBS_O_WORKDIR}/$resultDir/result-${filename}.out" ]]
+        then
+
+            #copy and unzip
+            todo="cp ${PBS_O_WORKDIR}//${filespos}/${zipfilename} . && unxz ${zipfilename}"
+            echo "$todo" >> todo
+
+            todo="python compute_to_mus.py -i ${filename} >> result-${filename}.out 2>&1"
+            echo "$todo" >> todo
+
+            todo="/usr/bin/time --verbose -o clingo_${filename}.timeout clingo --enum-mode=domRec --heuristic=domain -n 0 -q --time-limit=3600 clingo_${filename} >> result-${filename}.out 2>&1"
+            echo "$todo" >> todo
+
+            # todo="timeout 3600s ./mcsmus -all-cores ${filename} >> result-${filename}.out 2>&1"
+            # echo "$todo" >> todo
+
+            todo="/usr/bin/time --verbose -o marco_${filename}.timeout ./marco.py --cnf -T ${tlimit} --threads 1 ${filename} >> marco-${filename}.out 2>&1"
+            echo "$todo" >> todo
+
+            todo="~/anaconda3/envs/kc/bin/python check_num_of_mus.py -i ${filename} -a marco >> result-${filename}.out 2>&1"
+            echo "$todo" >> todo
+
+            todo="/usr/bin/time --verbose -o unimus_${filename}.timeout ./unimus -v 0 ${filename} >> unimus-${filename}.out 2>&1"
+            echo "$todo" >> todo
+
+            todo="~/anaconda3/envs/kc/bin/python check_num_of_mus.py -i ${filename} -a unimus >> result-${filename}.out 2>&1"
+            echo "$todo" >> todo
+
+            todo="/usr/bin/time --verbose -o remus_${filename}.timeout ./must -a remus ${filename} >> remus-${filename}.out 2>&1"
+            echo "$todo" >> todo
+
+            todo="~/anaconda3/envs/kc/bin/python check_num_of_mus.py -i ${filename} -a remus >> result-${filename}.out 2>&1"
+            echo "$todo" >> todo
+
+            todo="/usr/bin/time --verbose -o wrapper_${filename}.timeout ~/anaconda3/envs/kc/bin/python counter.py ${filename} >> result-${filename}.out 2>&1"
+            echo "$todo" >> todo
+
+            todo="/usr/bin/time --verbose -o mus_${filename}.timeout clingo --enum-mode=domRec --heuristic=domain -n 0 -q --time-limit=3600 mus_${filename} >> result-${filename}.out 2>&1"
+            echo "$todo" >> todo
+
+            todo="mkdir -p ${PBS_O_WORKDIR}//${output}"
+            echo "$todo" >> todo
+
+            todo="mv *${filename}.timeout result-${filename}.out *${filename}.out.xz ${PBS_O_WORKDIR}//${output}"
+            echo "$todo" >> todo
+
+            numlines=$((numlines+1))
+        fi
+    done
+    let at_opt=at_opt+1
+done
+todoper=13
 
 # create per-core todos
 echo "The total number of benchmarks: $numlines"
@@ -146,7 +209,7 @@ if [[ $remain -ge 1 ]]; then
 fi
 remain=$((numlines-numper*(numthreads-1)))
 mystart=0
-memlimit="8000000"
+memlimit="16000000"
 for ((myi=0; myi < numthreads ; myi++))
 do
     rm -f todo_$myi.sh
