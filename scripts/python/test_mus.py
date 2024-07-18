@@ -8,10 +8,12 @@ def check_mus_by_mus(clingo_output, marco_output):
         return inconsistent
     check_list = set()
     for mus in clingo_output:
-        sorted_clauses = sorted(mus)
+        sorted_clauses = set(sorted(mus))
         for index, marco_mus in enumerate(marco_output):
-            if index not in check_list and sorted_clauses == sorted(marco_mus):
-                check_list.add(index)
+            if index not in check_list:
+                marco_mus_set = set(sorted(marco_mus))
+                if len(sorted_clauses.intersection(marco_mus_set)) == len(sorted_clauses):
+                    check_list.add(index)
 
     inconsistent = len(clingo_output) != len(check_list)
     return inconsistent
