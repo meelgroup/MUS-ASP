@@ -2,7 +2,7 @@
 \label{section:preliminaries}
 In this section, we present the background knowledge from propositional logic and answer set programming to understand the technical contribution of our paper. 
 
-In propositional logic, a \emph{propositional variable} $v$ takes a value from the domain $\be = \{0,1\}$, equivalently $\{\mathsf{false}, \mathsf{true}\}$. 
+\paragraph{Propositional Logic} A \emph{propositional variable} $v$ takes a value from the domain $\be = \{0,1\}$, equivalently $\{\mathsf{false}, \mathsf{true}\}$. 
 A \emph{literal} $\ell$ is either a variable $v$ (positive literal) or its negation $\neg{v}$ (negative literal).
 A \emph{clause} $C$ is a {\em disjunction} of literals, denoted as $C = \bigvee_{i} \ell_i$. 
 %A clause with a single literal is called a \emph{unit clause}.
@@ -10,8 +10,46 @@ A Boolean formula $F$, in \emph{Conjunctive Normal Form (CNF)}, is a {\em conjun
 of clauses, represented as $F = \bigwedge_{j} C_j$. We use the notation $\Var{F}$ to denote the set of propositional atoms or variables within  
 $F$. 
 
-An assignment $\tau$ is a mapping $\tau: X \rightarrow \{0,1\}$, where $X \subseteq \Var{F}$.  For a variable $v \in X$, we define
+An assignment $\tau$ is a mapping $\tau: X \rightarrow \be$, where $X \subseteq \Var{F}$.  For a variable $v \in X$, we define
 $\tau(\neg{v}) = 1 - \tau(v)$. 
 An assignment $\tau$ satifies a literal $\ell$, denoted as $\tau \models \ell$, if $\tau$ evaluates $\ell$ to \true.
 Similarly, an assignment $\tau$ satifies a clause $C$, denoted as $\tau \models C$, if $\tau$ evaluates one of its literals to \true.
 The assignment $\tau$ over $\Var{F}$ is a {\em model} of $F$ if $\tau$ evaluates $F$ to be \true. 
+A formula $F$ is said to be {\em satisfiable} if there exists a model $\tau$ of $F$.
+Otherwise, the formula $F$ is said to be {\em unsatisfiable}.
+
+We consider a CNF formula as a multiset of clauses and use the operations introduced in the context of sets.
+Within the context of unsatisfiable Boolean formula, we introduce the following terminologies. 
+An unsatisfiable core of $F$ is a set of clauses $UC$ such that $UC$ is unsatisfiable. 
+A {\em minimal correction subset} (MCS) of $F$ is a subset of clauses $C$ such that $F \setminus C$ is satisfiable and for every clause $f \in C$, it holds that $F \setminus (C \setminus \{f\})$ is unsatisfiable.
+A {\em minimal unsatisfiable subset} (MUS) of $F$ is a subset of clauses $U$ such that $U$ is unsatisfiable and for every $f \in U$, it holds that $U \setminus \{f\}$ is satisfiable.
+
+\begin{example}
+    Consider the Boolean formula $F = \{f_1 = \{x_1\}, f_2 = \{\neg{x_1}\}, f_3 = \{x_2\}, f_4 = \{\neg{x_1}, \neg{x_2}\}\}$.
+    The formula $F$ is unsatisfiable. 
+    The formula $F$ has $5$ unsatisfiable cores: $\{f_1,f_2\}$, $\{f_1,f_2,f_3\}$, $\{f_1,f_2,f_4\}$, $\{f_1,f_3,f_4\}$, $\{f_1,f_2,f_3,f_4\}$ 
+    The formula $F$ has $3$ MCSes: $\{f_1\}$, $\{f_2,f_3\}$, $\{f_2,f_4\}$.
+    The formula $F$ has $2$ MUSes: $\{f_1,f_2\}$ and $\{f_1,f_3,f_4\}$.
+\end{example}
+\paragraph{Answer Set Programming.}
+An \textit{answer set program} $P$ consists of a set of rules, each rule is structured as follows:
+\begin{align}
+\label{eq:general_rule}
+\text{Rule $r$:~~}a_1 \vee \ldots a_k \leftarrow b_1, \ldots, b_m, \textsf{not } c_1, \ldots, \textsf{not } c_n
+\end{align}
+where, $a_1, \ldots, a_k, b_1, \ldots, b_m, c_1, \ldots, c_n$ are propositional variables or atoms, and $k,m,n$ are non-negative integers. 
+The notations $\rules{P}$ and $\at{P}$ denote the rules and atoms within the program $P$. 
+In rule $r$, the operator ``\textsf{not}'' denotes \textit{default negation}~\cite{clark1978}. For each 
+rule $r$ (\cref{eq:general_rule}), we adopt the following notations: the atom set $\{a_1, \ldots, a_k\}$ constitutes the {\em head} of $r$, denoted by $\head{r}$, the set $\{b_1, \ldots, b_m\}$ is referred to as the {\em positive body atoms} of $r$, denoted by $\body{r}^+$, and the set $\{c_1, \ldots, c_n\}$ is referred to as the \textit{negative body atoms} of $r$, denoted by $\body{r}^-$.
+A rule $r$ called a {\em constraint} when $\head{r}$ contains no atom.
+A program $P$ is called a {\em disjunctive logic program} if $\exists r \in \rules{P}$ such that $\Card{\head{r}} \geq 2$~\cite{BD1994}.
+
+In ASP, an interpretation $M$ over $\at{P}$ specifies which atoms are assigned \true; that is, an atom $a$ is \true under $M$ if and only if $a \in M$ (or \false when $a \not\in M$ resp.). 
+%
+An interpretation $M$ satisfies a rule $r$, denoted by $M \models r$, if and only if $(\head{r} \cup \body{r}^{-}) \cap M \neq \emptyset$ or $\body{r}^{+} \setminus M \neq \emptyset$. An interpretation $M$ is a {\em model} of $P$, denoted by $M \models P$, when $\forall_{r \in \rules{P}} M \models r$. 
+%
+The \textit{Gelfond-Lifschitz (GL) reduct} of a program $P$, with respect to an interpretation $M$, is defined as $P^M = \{\head{r} \leftarrow \body{r}^+| r \in \rules{P}, \body{r}^- \cap M = \emptyset\}$~\cite{GL1991}.
+%
+An interpretation $M$ is an {\em answer set} of $P$ if $M \models P$ and no $M\textprime \subset M$ exists such that $M\textprime \models P^M$.
+%
+We denote the answer sets of program $P$ using the notation $\answer{P}$.
