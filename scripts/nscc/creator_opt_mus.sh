@@ -100,26 +100,26 @@ do
             # todo="timeout 3600s ./mcsmus -all-cores ${filename} >> result-${filename}.out 2>&1"
             # echo "$todo" >> todo
 
-            todo="/usr/bin/time --verbose -o wrapper_${filename}.timeout ~/anaconda3/envs/kc/bin/python --w4 --w5 --w6 --w7 --w8 counter.py ${filename} >> result-${filename}.out 2>&1"
+            todo="/usr/bin/time --verbose -o wrapper_${filename}.timeout ~/anaconda3/envs/kc/bin/python counter.py --w4 --w5 --w6 --w7 --w8 ${filename} >> result-${filename}.out 2>&1"
             echo "$todo" >> todo
 
             todo="/usr/bin/time --verbose -o mus_1_${filename}.timeout clingo --enum-mode=domRec --heuristic=domain -n 0 -q --time-limit=3600 mus_${filename} >> result-${filename}.out 2>&1"
             echo "$todo" >> todo
 
 
-            todo="/usr/bin/time --verbose -o wrapper_${filename}.timeout ~/anaconda3/envs/kc/bin/python --w6 --w7 --w8 counter.py ${filename} >> result-${filename}.out 2>&1"
+            todo="/usr/bin/time --verbose -o wrapper_${filename}.timeout ~/anaconda3/envs/kc/bin/python counter.py --w6 --w7 --w8 ${filename} >> result-${filename}.out 2>&1"
             echo "$todo" >> todo
 
             todo="/usr/bin/time --verbose -o mus_2_${filename}.timeout clingo --enum-mode=domRec --heuristic=domain -n 0 -q --time-limit=3600 mus_${filename} >> result-${filename}.out 2>&1"
             echo "$todo" >> todo
 
-            todo="/usr/bin/time --verbose -o wrapper_${filename}.timeout ~/anaconda3/envs/kc/bin/python --w7 --w8 counter.py ${filename} >> result-${filename}.out 2>&1"
+            todo="/usr/bin/time --verbose -o wrapper_${filename}.timeout ~/anaconda3/envs/kc/bin/python counter.py --w7 --w8 ${filename} >> result-${filename}.out 2>&1"
             echo "$todo" >> todo
 
             todo="/usr/bin/time --verbose -o mus_3_${filename}.timeout clingo --enum-mode=domRec --heuristic=domain -n 0 -q --time-limit=3600 mus_${filename} >> result-${filename}.out 2>&1"
             echo "$todo" >> todo
 
-            todo="/usr/bin/time --verbose -o wrapper_${filename}.timeout ~/anaconda3/envs/kc/bin/python --w8 counter.py ${filename} >> result-${filename}.out 2>&1"
+            todo="/usr/bin/time --verbose -o wrapper_${filename}.timeout ~/anaconda3/envs/kc/bin/python counter.py --w8 ${filename} >> result-${filename}.out 2>&1"
             echo "$todo" >> todo
 
             todo="/usr/bin/time --verbose -o mus_4_${filename}.timeout clingo --enum-mode=domRec --heuristic=domain -n 0 -q --time-limit=3600 mus_${filename} >> result-${filename}.out 2>&1"
@@ -170,25 +170,25 @@ do
             # todo="timeout 3600s ./mcsmus -all-cores ${filename} >> result-${filename}.out 2>&1"
             # echo "$todo" >> todo
 
-            todo="/usr/bin/time --verbose -o wrapper_${filename}.timeout ~/anaconda3/envs/kc/bin/python --w4 --w5 --w6 --w7 --w8 counter.py ${filename} >> result-${filename}.out 2>&1"
+            todo="/usr/bin/time --verbose -o wrapper_${filename}.timeout ~/anaconda3/envs/kc/bin/python counter.py --w4 --w5 --w6 --w7 --w8 ${filename} >> result-${filename}.out 2>&1"
             echo "$todo" >> todo
 
             todo="/usr/bin/time --verbose -o mus_1_${filename}.timeout clingo --enum-mode=domRec --heuristic=domain -n 0 -q --time-limit=3600 mus_${filename} >> result-${filename}.out 2>&1"
             echo "$todo" >> todo
 
-            todo="/usr/bin/time --verbose -o wrapper_${filename}.timeout ~/anaconda3/envs/kc/bin/python --w6 --w7 --w8 counter.py ${filename} >> result-${filename}.out 2>&1"
+            todo="/usr/bin/time --verbose -o wrapper_${filename}.timeout ~/anaconda3/envs/kc/bin/python counter.py --w6 --w7 --w8 ${filename} >> result-${filename}.out 2>&1"
             echo "$todo" >> todo
 
             todo="/usr/bin/time --verbose -o mus_2_${filename}.timeout clingo --enum-mode=domRec --heuristic=domain -n 0 -q --time-limit=3600 mus_${filename} >> result-${filename}.out 2>&1"
             echo "$todo" >> todo
 
-            todo="/usr/bin/time --verbose -o wrapper_${filename}.timeout ~/anaconda3/envs/kc/bin/python --w7 --w8 counter.py ${filename} >> result-${filename}.out 2>&1"
+            todo="/usr/bin/time --verbose -o wrapper_${filename}.timeout ~/anaconda3/envs/kc/bin/python counter.py --w7 --w8 ${filename} >> result-${filename}.out 2>&1"
             echo "$todo" >> todo
 
             todo="/usr/bin/time --verbose -o mus_3_${filename}.timeout clingo --enum-mode=domRec --heuristic=domain -n 0 -q --time-limit=3600 mus_${filename} >> result-${filename}.out 2>&1"
             echo "$todo" >> todo
 
-            todo="/usr/bin/time --verbose -o wrapper_${filename}.timeout ~/anaconda3/envs/kc/bin/python --w8 counter.py ${filename} >> result-${filename}.out 2>&1"
+            todo="/usr/bin/time --verbose -o wrapper_${filename}.timeout ~/anaconda3/envs/kc/bin/python counter.py --w8 ${filename} >> result-${filename}.out 2>&1"
             echo "$todo" >> todo
 
             todo="/usr/bin/time --verbose -o mus_4_${filename}.timeout clingo --enum-mode=domRec --heuristic=domain -n 0 -q --time-limit=3600 mus_${filename} >> result-${filename}.out 2>&1"
