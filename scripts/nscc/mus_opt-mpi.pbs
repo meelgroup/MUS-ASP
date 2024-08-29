@@ -3,7 +3,7 @@
 #          Set the name of the job (up to 15 characters,
 #          no blank spaces, start with alphanumeric character)
 
-#PBS -N Minimal-Correction-Subset
+#PBS -N Minimal-Unsatisfiable-Subsets
 
 #          By default, the standard output and error streams are sent
 #          to files in the current working directory with names:
@@ -84,7 +84,7 @@
 #          Specify the number of nodes requested and the
 #          number of processors per node.
 
-#PBS -l select=4:ncpus=64:mpiprocs=27:mem=440G
+#PBS -l select=1:ncpus=64:mpiprocs=27:mem=440G
 
 #          Define the interval at which the job will be checkpointed,
 #          if checkpointing is desired, in terms of an integer number
@@ -102,4 +102,4 @@
 source ~/anaconda3/etc/profile.d/conda.sh 
 conda activate potassco
 module load openmpi/4.1.5-gcc11
-mpirun ${PBS_O_WORKDIR}/creator_mss.sh 
+mpirun ${PBS_O_WORKDIR}/creator_opt_mus.sh 
