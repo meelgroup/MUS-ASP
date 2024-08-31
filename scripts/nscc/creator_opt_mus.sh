@@ -29,7 +29,7 @@ numthreads=$((OMPI_COMM_WORLD_SIZE))
 SERVER=$PBS_O_HOST
 WORKDIR="scratch/${PBS_JOBID}_${OMPI_COMM_WORLD_RANK}"
 output="${output}-${PBS_JOBID}"
-resultDir="output"
+resultDir="result"
 
 # echo ------------------------------------------------------
 # echo "Job is running on node ${PBS_NODEFILE}"
@@ -84,7 +84,7 @@ do
         filename=$(basename "$file")
         # filename=$(basename "$file")
         # does the file run earlier
-        if [[ ! -f "${PBS_O_WORKDIR}/$resultDir/result-${filename}.out" ]]
+        if [[ ! -f "${PBS_O_WORKDIR}/$resultDir/result-$filename.out" ]]
         then
 
             #copy and unzip
@@ -154,7 +154,7 @@ do
         filename=${zipfilename%.xz}
         # filename=$(basename "$file")
         # does the file run earlier
-        if [[ ! -f "${PBS_O_WORKDIR}/$resultDir/result-${filename}.out" ]]
+        if [[ ! -f "${PBS_O_WORKDIR}/$resultDir/result-$filename.out" ]]
         then
 
             #copy and unzip
