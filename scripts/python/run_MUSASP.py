@@ -1,4 +1,4 @@
-import os, argparse, subprocess
+import os, argparse, subprocess, math
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-i','--i', help='input CNF file', required=True)
@@ -8,10 +8,10 @@ args = parser.parse_args()
 python_dir = 'python'
 clingo_dir = 'clingo'
 heuristic = ''
-if args.heu == None:
+if args.heu != None:
     heuristic = args.heu
 
-if args.p == None:
+if args.p != None:
     python_dir = 'python'
 
 os.system('/usr/bin/time --verbose -o heu_{2}.timeout {0} counter.py {1} {2} >> heuristic-{2}.out 2>&1'.format(python_dir, heuristic, args.i))
@@ -23,15 +23,16 @@ for line in out_file:
     if line.startswith("Total execution (clock) time in seconds"):
         l = line.strip().split()
         heuristic_time = float(l[-1])
-    elif line.startswith("autarky size:") or line.startswith("identified MCSes:") or line.strip().startswith("Total") or line.startswith("-- Using ") or line.startswith("identified MCSes:"):
+    elif line.startswith("autarky size:") or line.strip().startswith("Total") or line.startswith("-- Using ") or line.startswith("identified MCSes:"):
         print(line.strip())
 
 print('Time spent in heuristic: {0}'.format(heuristic_time))
 
 out_file.close()
-total_time = total_time - heuristic_time # remaining time
+total_time = math.ceil(total_time - heuristic_time) # remaining time
 assert(total_time > 0)
 
+print('/usr/bin/time --verbose -o mus_{0}.timeout clingo --enum-mode=domRec --heuristic=domain -n 0 -q --time-limit={1} mus_{0} >> result-{0}.out 2>&1'.format(args.i, total_time))
 os.system('/usr/bin/time --verbose -o mus_{0}.timeout clingo --enum-mode=domRec --heuristic=domain -n 0 -q --time-limit={1} mus_{0} >> result-{0}.out 2>&1'.format(args.i, total_time))
 
 
