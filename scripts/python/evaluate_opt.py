@@ -1,10 +1,10 @@
 import os
 import os, glob, math
 
-result_dir = "result"
+result_dir = "initial-8101398.pbs101"
 file_count = 0
-tap = [0] * 6
-enumerated = [0] * 6
+tap = [0] * 4
+enumerated = [0] * 4
 timeout = 3600
 par = 2
 consistency_checked = 0
@@ -31,15 +31,15 @@ for file in glob.glob(result_dir + "/result-*"):
         elif line.startswith("CPU Time"):
             l = line.split()
             ntimes.append(float(l[-1].replace("s", "")))
-        elif line.startswith("Total execution (clock) time in seconds"):
+        elif line.startswith("Time spent in heuristic"):
             l = line.split()
             nproc.append(float(l[-1]))
             # max_preproc_time = max(max_preproc_time, float(l[-1]))
-    # if len(nproc) == 4:
+    # if len(nmuses) != 4:
     #     print(file)
-    # assert(len(nmuses) == 6)
-    # assert(len(ntimes) == 6)
-    # assert(len(nproc) == 5 or len(nproc) == 4)
+    assert(len(nmuses) == 4)
+    assert(len(ntimes) == 4)
+    assert(len(nproc) == 4)
 
     # computing tap score, first compute min
     min_count = nmuses[0]
@@ -62,7 +62,7 @@ for file in glob.glob(result_dir + "/result-*"):
     assert(len(set(exact_mus)) <= 1)
     file_pointer.close()
 
-print([_/file_count for _ in tap]) # computing average TAP score
+print([round(_/file_count,3) for _ in tap]) # computing average TAP score
 print(enumerated) # number of exact enumeration 
 print(file_count)
     

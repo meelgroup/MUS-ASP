@@ -1,6 +1,6 @@
 import glob, os, json, subprocess, math
 
-res_dir = "initial-7774670.pbs101" # it contains all baseline results
+res_dir = "initial-8110589.pbs101" # it contains all baseline results
 output_file = "output/" + res_dir + ".out"
 summary_file = "output/summary_" + res_dir + ".out"
 dir_name = res_dir + "/" + "result-*"
@@ -28,7 +28,14 @@ total_unimus_enumerated = 0
 total_remus_enumerated = 0
 
 tol = list()
-tap_list = [0,0,0,0]
+tap_list = [0,0,0,0,0]
+hybrid_tap_list = [0,0,0,0,0]
+clingo_index = 0
+marco_index = 1
+remus_index = 2
+unimus_index = 3
+mus_asp_index = 4
+redundant = 0
 experiment_timeout = 3600
 par = 2
 
@@ -53,6 +60,15 @@ def get_time(file, solver):
     system_time = float(time[-1])
     return user_time + system_time
 
+def number_of_constraint(file):
+    xz_file = file.replace("result", "unimus") 
+    os.system('unxz {0}'.format(xz_file + ".xz"))
+    sc_size = subprocess.Popen('grep "soft clauses:" {0}'.format(xz_file), shell=True, stdout=subprocess.PIPE).stdout
+    sc_size =  sc_size.read().decode("utf-8").strip().split()
+    num_of_soft_clauses = int(sc_size[-1])
+    # again zip it
+    os.system('xz {0}'.format(xz_file))
+    return num_of_soft_clauses
 
 def log_value(n: int):
     return round(math.log10(n), 2) if n > 0 else 0
@@ -86,7 +102,8 @@ for file in glob.glob(dir_name):
     remus_timeout = False
 
     unprocessed = True
-
+    nmuses = [None] * 5
+    ntimes = [0] * 5
     total_num_files += 1
     for line in f:
         if line.startswith("CPU Time"):
@@ -100,15 +117,17 @@ for file in glob.glob(dir_name):
                 else:
                     clingo_count = int(l[-1])
                     clingo_timeout = False
-                clingo_mus_count_list.append(log_value(clingo_count))
+                
                 unprocessed = False
+                nmuses[clingo_index] = clingo_count
             else:
                 if "+" in line:
                     clingo_p_count = int(l[-1].replace("+", ""))
                 else:
                     clingo_p_count = int(l[-1])
                     clingo_p_timeout = False
-                clingo_p_mus_count_list.append(log_value(clingo_count))
+                
+                nmuses[mus_asp_index] = clingo_p_count
         elif line.startswith("Total execution (clock) time in seconds"):
             l = line.split()
             clingo_preprocessing_time = float(l[-1])
@@ -121,26 +140,34 @@ for file in glob.glob(dir_name):
         elif line.startswith("=> unimus The number of MUS:"):
             l = line.split()
             unimus_count = int(l[-1])
-            unimus_mus_count_list.append(log_value(unimus_count))
+            
+            nmuses[unimus_index] = unimus_count
         elif line.startswith("=> marco The number of MUS:"):
             l = line.split()
             marco_count = int(l[-1])
-            marco_mus_count_list.append(log_value(marco_count))
+            
+            nmuses[marco_index] = marco_count
         elif line.startswith("=> remus The number of MUS:"):
             l = line.split()
             remus_count = int(l[-1])
-            remus_mus_count_list.append(log_value(remus_count))
+            
+            nmuses[remus_index] = remus_count
 
 
     clingo_p_time = get_time(file, "mus") + clingo_preprocessing_time
+    ntimes[mus_asp_index] = clingo_p_time
     clingo_time = get_time(file, "clingo")
+    ntimes[clingo_index] = clingo_time
     unimus_time = get_time(file, "unimus")
+    ntimes[unimus_index] = unimus_time
     marco_time = get_time(file, "marco")
+    ntimes[marco_index] = marco_time
     remus_time = get_time(file, "remus")
+    ntimes[remus_index] = remus_time
     true_mus_count = None
-    if unimus_timeout == False or marco_timeout == False:
-        assert(unimus_count != None or marco_count != None)
-        true_mus_count = unimus_count if unimus_count != None else marco_count 
+    if marco_timeout == False:
+        assert(marco_count != None)
+        true_mus_count = marco_count 
     if true_mus_count != None and clingo_timeout == False:
         if true_mus_count != clingo_count:
             print("[Output mismatch]: {0}".format(file))
@@ -149,7 +176,17 @@ for file in glob.glob(dir_name):
 
     if total_num_files % 100 == 0:
         print("{0} files processed".format(total_num_files))
-
+    
+    if None not in nmuses and 0 not in nmuses and len(set(nmuses)) == 1:
+        # print(file, nmuses)
+        redundant += 1
+        continue
+    
+    remus_mus_count_list.append(log_value(remus_count))
+    marco_mus_count_list.append(log_value(marco_count))
+    unimus_mus_count_list.append(log_value(unimus_count))
+    clingo_p_mus_count_list.append(log_value(clingo_count))
+    clingo_mus_count_list.append(log_value(clingo_count))
     if clingo_timeout == False:
         total_clingo_enumerated += 1
         total_clingo_time += clingo_time
@@ -176,6 +213,26 @@ for file in glob.glob(dir_name):
     else:
         total_remus_time += par * experiment_timeout
 
+    clauses = number_of_constraint(file)
+    min_count = None
+    for _ in nmuses:
+        if min_count == None or min_count > _:
+            min_count = _ 
+    for index, _ in enumerate(nmuses):
+        if nmuses[index] == 0:
+            tap_list[index] += par * experiment_timeout
+        else:
+            tap_list[index] += ntimes[index] + experiment_timeout * (1 + math.log2(min_count + 1)) / (1 + math.log2(nmuses[index] + 1)) 
+        
+        ref_index = index
+        if clauses < 5000:
+            ref_index = 4
+        if nmuses[ref_index] == 0:
+            hybrid_tap_list[index] += par * experiment_timeout
+        else:
+            hybrid_tap_list[index] += ntimes[ref_index] + experiment_timeout * (1 + math.log2(min_count + 1)) / (1 + math.log2(nmuses[ref_index] + 1)) 
+
+
 print("Total number of files: {0}".format(total_num_files))
 print("Output mismatched: {0}".format(output_mismatch))
 print("Output checked: {0}".format(output_checked))
@@ -194,6 +251,9 @@ print("Clingo + Prep PAR-2 score: {0}".format(total_clingo_p_time/total_num_file
 print("MARCO PAR-2 score: {0}".format(total_marco_time/total_num_files))
 print("unimus PAR-2 score: {0}".format(total_unimus_time/total_num_files))
 print("remus PAR-2 score: {0}".format(total_remus_time/total_num_files))
+print([_/(total_num_files - redundant) for _ in tap_list])
+print([_/(total_num_files - redundant) for _ in hybrid_tap_list]) # it is the hybrid MUS enumerator
+print(total_num_files - redundant)
     
 
     
