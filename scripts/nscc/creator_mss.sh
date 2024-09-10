@@ -106,10 +106,10 @@ do
             todo="~/anaconda3/envs/kc/bin/python check_num_of_mus.py -i ${filename} -a marco >> result-${filename}.out 2>&1"
             echo "$todo" >> todo
 
-            todo="/usr/bin/time --verbose -o unimus_${filename}.timeout ./unimus -v 0 ${filename} >> unimus-${filename}.out 2>&1"
+            todo="/usr/bin/time --verbose -o tome_${filename}.timeout ./must -a tome ${filename} >> tome-${filename}.out 2>&1"
             echo "$todo" >> todo
 
-            todo="~/anaconda3/envs/kc/bin/python check_num_of_mus.py -i ${filename} -a unimus >> result-${filename}.out 2>&1"
+            todo="~/anaconda3/envs/kc/bin/python check_num_of_mus.py -i ${filename} -a tome >> result-${filename}.out 2>&1"
             echo "$todo" >> todo
 
             todo="/usr/bin/time --verbose -o remus_${filename}.timeout ./must -a remus ${filename} >> remus-${filename}.out 2>&1"
@@ -169,10 +169,10 @@ do
             todo="~/anaconda3/envs/kc/bin/python check_num_of_mus.py -i ${filename} -a marco >> result-${filename}.out 2>&1"
             echo "$todo" >> todo
 
-            todo="/usr/bin/time --verbose -o unimus_${filename}.timeout ./unimus -v 0 ${filename} >> unimus-${filename}.out 2>&1"
+            todo="/usr/bin/time --verbose -o tome_${filename}.timeout ./must -a tome ${filename} >> tome-${filename}.out 2>&1"
             echo "$todo" >> todo
 
-            todo="~/anaconda3/envs/kc/bin/python check_num_of_mus.py -i ${filename} -a unimus >> result-${filename}.out 2>&1"
+            todo="~/anaconda3/envs/kc/bin/python check_num_of_mus.py -i ${filename} -a tome >> result-${filename}.out 2>&1"
             echo "$todo" >> todo
 
             todo="/usr/bin/time --verbose -o remus_${filename}.timeout ./must -a remus ${filename} >> remus-${filename}.out 2>&1"
