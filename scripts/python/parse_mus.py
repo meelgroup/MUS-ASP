@@ -48,6 +48,10 @@ marco_mus_count_list = []
 tome_mus_count_list = []
 remus_mus_count_list = []
 
+compare_remus = []
+compare_tome = []
+compare_marco = []
+
 def get_time(file, solver):
     file_name = os.path.basename(file)
     output_file = res_dir + "/" + solver + "_" + file_name[len("result-"):-len(".out")] + ".timeout"
@@ -232,6 +236,9 @@ for file in glob.glob(dir_name):
         else:
             hybrid_tap_list[index] += ntimes[ref_index] + experiment_timeout * (1 + math.log2(min_count + 1)) / (1 + math.log2(nmuses[ref_index] + 1)) 
 
+    compare_remus.append((clingo_p_count,remus_count))
+    compare_tome.append((clingo_p_count,tome_count))
+    compare_marco.append((clingo_p_count,marco_count))
 
 print("Total number of files: {0}".format(total_num_files))
 print("Output mismatched: {0}".format(output_mismatch))
@@ -241,11 +248,14 @@ print("Clingo enumerated: {0}".format(total_clingo_enumerated))
 print("tome enumerated: {0}".format(total_tome_enumerated))
 print("MARCO enumerated: {0}".format(total_marco_enumerated))
 print("REMUS enumerated: {0}".format(total_remus_enumerated))
-print(sorted(clingo_mus_count_list))
-print(sorted(marco_mus_count_list))
-print(sorted(tome_mus_count_list))
-print(sorted(clingo_p_mus_count_list))
-print(sorted(remus_mus_count_list))
+# print(sorted(clingo_mus_count_list))
+# print(sorted(marco_mus_count_list))
+# print(sorted(tome_mus_count_list))
+# print(sorted(clingo_p_mus_count_list))
+# print(sorted(remus_mus_count_list))
+print("marco = ", compare_marco)
+print("remus = ", compare_remus)
+print("tome = ", compare_tome)
 print("Clingo PAR-2 score: {0}".format(total_clingo_time/total_num_files))
 print("Clingo + Prep PAR-2 score: {0}".format(total_clingo_p_time/total_num_files))
 print("MARCO PAR-2 score: {0}".format(total_marco_time/total_num_files))
