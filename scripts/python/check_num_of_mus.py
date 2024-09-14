@@ -16,8 +16,8 @@ if args.alg == "tome" or args.alg == "remus":
         if line.strip().startswith("Found MUS"):
             number_of_mus += 1
             stat = re.split(':|,|#', line)
-            if number_of_mus % 100 == 0:
-                print("[{0}] {1} MUS enumerated in time: {2}".format(args.alg, stat[1], float(stat[9])))
+            # if number_of_mus % 100 == 0:
+            #     print("[{0}] {1} MUS enumerated in time: {2}".format(args.alg, stat[1], float(stat[9])))
             last_time_enumeration = float(stat[9])
         elif line.strip().startswith("Enumeration completed"):
             enumeration_completed = True
