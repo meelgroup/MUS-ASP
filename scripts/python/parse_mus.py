@@ -1,6 +1,7 @@
 import glob, os, json, subprocess, math
 
 res_dir = "initial-8120825.pbs101" # it contains all baseline results
+# res_dir = "initial-8186374.pbs101" # random benchmarks 
 output_file = "output/" + res_dir + ".out"
 summary_file = "output/summary_" + res_dir + ".out"
 dir_name = res_dir + "/" + "result-*"
@@ -52,6 +53,16 @@ compare_remus = []
 compare_tome = []
 compare_marco = []
 
+# if want to compare Wasp as well
+# wasp_result = "initial-8186875.pbs101.json"
+# factors = open(wasp_result) # the cyclic result is herewith
+# factor_result = json.load(factors)
+# def parse_wasp_result(file):
+#     key = file
+#     if key in factor_result:
+#         return factor_result[key]
+#     return {}
+
 def get_time(file, solver):
     file_name = os.path.basename(file)
     output_file = res_dir + "/" + solver + "_" + file_name[len("result-"):-len(".out")] + ".timeout"
@@ -66,6 +77,8 @@ def get_time(file, solver):
 
 def number_of_constraint(file):
     xz_file = file.replace("result", "tome") 
+    if "random_instance" in file:
+        return 1
     os.system('unxz {0}'.format(xz_file + ".xz"))
     sc_size = subprocess.Popen('grep "Number of constraints in the input set:" {0}'.format(xz_file), shell=True, stdout=subprocess.PIPE).stdout
     sc_size =  sc_size.read().decode("utf-8").strip().split(":")
@@ -191,6 +204,15 @@ for file in glob.glob(dir_name):
     tome_mus_count_list.append(log_value(tome_count))
     clingo_p_mus_count_list.append(log_value(clingo_count))
     clingo_mus_count_list.append(log_value(clingo_count))
+    # if want to compare Wasp
+    # wasp_mus_result = parse_wasp_result(os.path.basename(file))
+    # if wasp_mus_result != {}:
+    #     nmuses[clingo_index] = wasp_mus_result["count"]
+    #     ntimes[clingo_index] = wasp_mus_result["time"]
+    # else:
+    #     nmuses[clingo_index] = 0
+    #     ntimes[clingo_index] = 3600
+
     if clingo_timeout == False:
         total_clingo_enumerated += 1
         total_clingo_time += clingo_time

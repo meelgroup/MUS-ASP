@@ -1,10 +1,11 @@
 import os
 import os, glob, math
 
-result_dir = "initial-8101398.pbs101"
+# result_dir = "initial-8101398.pbs101"
+result_dir = "initial-8186062.pbs101"
 file_count = 0
 tap = [0] * 4
-enumerated = [0] * 4
+# enumerated = [0] * 4
 timeout = 3600
 par = 2
 consistency_checked = 0
@@ -21,7 +22,7 @@ for file in glob.glob(result_dir + "/result-*"):
         if line.startswith("Models"):
             l = line.split()
             if "+" not in l[-1].strip():
-                enumerated[len(nmuses)] = enumerated[len(nmuses)] + 1
+                # enumerated[len(nmuses)] = enumerated[len(nmuses)] + 1
                 exact_mus.append(int(l[-1].replace("+", "")))
                 if len(nmuses) == 0:
                     # non heuristic number of muses
@@ -63,6 +64,6 @@ for file in glob.glob(result_dir + "/result-*"):
     file_pointer.close()
 
 print([round(_/file_count,3) for _ in tap]) # computing average TAP score
-print(enumerated) # number of exact enumeration 
+# print(enumerated) # number of exact enumeration 
 print(file_count)
     
