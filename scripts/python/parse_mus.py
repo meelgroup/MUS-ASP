@@ -39,6 +39,7 @@ mus_asp_index = 4
 redundant = 0
 experiment_timeout = 3600
 par = 2
+clause_thresh = 2500
 
 output_mismatch = 0
 output_checked = 0
@@ -52,6 +53,12 @@ remus_mus_count_list = []
 compare_remus = []
 compare_tome = []
 compare_marco = []
+compare_hybrid_remus = []
+compare_hybrid_tome = []
+compare_hybrid_marco = []
+
+# length_json = dict()
+num_of_soft_constraints = json.load(open("length.json"))
 
 # if want to compare Wasp as well
 # wasp_result = "initial-8186875.pbs101.json"
@@ -62,6 +69,7 @@ compare_marco = []
 #     if key in factor_result:
 #         return factor_result[key]
 #     return {}
+
 
 def get_time(file, solver):
     file_name = os.path.basename(file)
@@ -77,14 +85,18 @@ def get_time(file, solver):
 
 def number_of_constraint(file):
     xz_file = file.replace("result", "tome") 
-    if "random_instance" in file:
-        return 1
-    os.system('unxz {0}'.format(xz_file + ".xz"))
-    sc_size = subprocess.Popen('grep "Number of constraints in the input set:" {0}'.format(xz_file), shell=True, stdout=subprocess.PIPE).stdout
-    sc_size =  sc_size.read().decode("utf-8").strip().split(":")
-    num_of_soft_clauses = int(sc_size[-1])
-    # again zip it
-    os.system('xz {0}'.format(xz_file))
+    # if "random_instance" in file:
+    #     length_json[os.path.basename(file)] = 1
+    #     return 1
+    # os.system('unxz {0}'.format(xz_file + ".xz"))
+    # sc_size = subprocess.Popen('grep "Number of constraints in the input set:" {0}'.format(xz_file), shell=True, stdout=subprocess.PIPE).stdout
+    # sc_size =  sc_size.read().decode("utf-8").strip().split(":")
+    # num_of_soft_clauses = int(sc_size[-1])
+    # # again zip it
+    # os.system('xz {0}'.format(xz_file))
+    # # write down the ncls
+    # length_json[os.path.basename(file)] = num_of_soft_clauses
+    num_of_soft_clauses = num_of_soft_constraints[os.path.basename(file)]
     return num_of_soft_clauses
 
 def log_value(n: int):
@@ -239,7 +251,7 @@ for file in glob.glob(dir_name):
     else:
         total_remus_time += par * experiment_timeout
 
-    clauses = number_of_constraint(file)
+    nclauses = number_of_constraint(file)
     min_count = None
     for _ in nmuses:
         if min_count == None or min_count > _:
@@ -251,7 +263,7 @@ for file in glob.glob(dir_name):
             tap_list[index] += ntimes[index] + experiment_timeout * (1 + math.log2(min_count + 1)) / (1 + math.log2(nmuses[index] + 1)) 
         
         ref_index = index
-        if clauses < 5000:
+        if nclauses < clause_thresh:
             ref_index = 4
         if nmuses[ref_index] == 0:
             hybrid_tap_list[index] += par * experiment_timeout
@@ -261,6 +273,15 @@ for file in glob.glob(dir_name):
     compare_remus.append((clingo_p_count,remus_count))
     compare_tome.append((clingo_p_count,tome_count))
     compare_marco.append((clingo_p_count,marco_count))
+    if nclauses < clause_thresh:
+        compare_hybrid_remus.append((clingo_p_count,remus_count))
+        compare_hybrid_tome.append((clingo_p_count,tome_count))
+        compare_hybrid_marco.append((clingo_p_count,marco_count))
+    else:
+        compare_hybrid_remus.append((remus_count,remus_count))
+        compare_hybrid_tome.append((tome_count,tome_count))
+        compare_hybrid_marco.append((marco_count,marco_count))
+
 
 print("Total number of files: {0}".format(total_num_files))
 print("Output mismatched: {0}".format(output_mismatch))
@@ -278,6 +299,9 @@ print("REMUS enumerated: {0}".format(total_remus_enumerated))
 print("marco = ", compare_marco)
 print("remus = ", compare_remus)
 print("tome = ", compare_tome)
+print("hybrid_marco = ", compare_hybrid_marco)
+print("hybrid_remus = ", compare_hybrid_remus)
+print("hybrid_tome = ", compare_hybrid_tome)
 print("Clingo PAR-2 score: {0}".format(total_clingo_time/total_num_files))
 print("Clingo + Prep PAR-2 score: {0}".format(total_clingo_p_time/total_num_files))
 print("MARCO PAR-2 score: {0}".format(total_marco_time/total_num_files))
@@ -286,6 +310,9 @@ print("remus PAR-2 score: {0}".format(total_remus_time/total_num_files))
 print([_/(total_num_files - redundant) for _ in tap_list])
 print([_/(total_num_files - redundant) for _ in hybrid_tap_list]) # it is the hybrid MUS enumerator
 print(total_num_files - redundant)
+
+# with open('{0}.json'.format("length"), 'w') as outfile:
+#     json.dump(length_json, outfile)
     
 
     
