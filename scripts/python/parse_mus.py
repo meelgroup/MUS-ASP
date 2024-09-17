@@ -8,6 +8,20 @@ dir_name = res_dir + "/" + "result-*"
 os.system('mkdir -p output')
 out_file = open(output_file, 'w')
 summ_file = open(summary_file, 'w')
+import xlsxwriter
+workbook = xlsxwriter.Workbook('MUS-ASP.xlsx')
+worksheet = workbook.add_worksheet("result")
+
+worksheet.write(0, 0, "Name")
+worksheet.write(0, 1, "|clause|")
+worksheet.write(0, 2, "MUS-ASP C.")
+worksheet.write(0, 3, "MUS-ASP T.")
+worksheet.write(0, 4, "ReMUS C.")
+worksheet.write(0, 5, "ReMUS T.")
+worksheet.write(0, 6, "MARCO C.")
+worksheet.write(0, 7, "MARCO T.")
+worksheet.write(0, 8, "TOME C.")
+worksheet.write(0, 9, "TOME T.")
 
 total_num_files = 0
 total_clingo_time = 0
@@ -281,6 +295,17 @@ for file in glob.glob(dir_name):
         compare_hybrid_remus.append((remus_count,remus_count))
         compare_hybrid_tome.append((tome_count,tome_count))
         compare_hybrid_marco.append((marco_count,marco_count))
+    
+    worksheet.write(total_num_files - redundant, 0, os.path.basename(file))
+    worksheet.write(total_num_files - redundant, 1, nclauses)
+    worksheet.write(total_num_files - redundant, 2, clingo_p_count)
+    worksheet.write(total_num_files - redundant, 3, clingo_p_time)
+    worksheet.write(total_num_files - redundant, 4, remus_count)
+    worksheet.write(total_num_files - redundant, 5, remus_time)
+    worksheet.write(total_num_files - redundant, 6, marco_count)
+    worksheet.write(total_num_files - redundant, 7, marco_time)
+    worksheet.write(total_num_files - redundant, 8, tome_count)
+    worksheet.write(total_num_files - redundant, 9, tome_time)
 
 
 print("Total number of files: {0}".format(total_num_files))
@@ -310,6 +335,7 @@ print("remus PAR-2 score: {0}".format(total_remus_time/total_num_files))
 print([_/(total_num_files - redundant) for _ in tap_list])
 print([_/(total_num_files - redundant) for _ in hybrid_tap_list]) # it is the hybrid MUS enumerator
 print(total_num_files - redundant)
+workbook.close()
 
 # with open('{0}.json'.format("length"), 'w') as outfile:
 #     json.dump(length_json, outfile)
