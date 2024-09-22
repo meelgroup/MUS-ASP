@@ -45,6 +45,8 @@ total_remus_enumerated = 0
 tol = list()
 tap_list = [0,0,0,0,0]
 hybrid_tap_list = [0,0,0,0,0]
+rank_list = [0,0,0,0]
+hybrid_rank_list = [0,0,0,0]
 clingo_index = 0
 marco_index = 1
 remus_index = 2
@@ -284,6 +286,21 @@ for file in glob.glob(dir_name):
         else:
             hybrid_tap_list[index] += ntimes[ref_index] + experiment_timeout * (1 + math.log2(min_count + 1)) / (1 + math.log2(nmuses[ref_index] + 1)) 
 
+    # compute rank
+    l = [marco_count, remus_count, tome_count, clingo_p_count]
+    rank = [sorted(l, reverse = True).index(x) + 1 for x in l]
+    for _, index in enumerate(rank):
+        rank_list[index] += rank[index]
+
+    if nclauses < clause_thresh:
+        for _, index in rank:
+            hybrid_rank_list[index] += 1
+    else:
+        l = [marco_count, remus_count, tome_count, clingo_p_count]
+        rank = [sorted(l, reverse = True).index(x) + 1 for x in l]
+        for _, index in rank:
+            hybrid_rank_list[index] += rank[index]
+
     compare_remus.append((clingo_p_count,remus_count))
     compare_tome.append((clingo_p_count,tome_count))
     compare_marco.append((clingo_p_count,marco_count))
@@ -334,6 +351,8 @@ print("tome PAR-2 score: {0}".format(total_tome_time/total_num_files))
 print("remus PAR-2 score: {0}".format(total_remus_time/total_num_files))
 print([_/(total_num_files - redundant) for _ in tap_list])
 print([_/(total_num_files - redundant) for _ in hybrid_tap_list]) # it is the hybrid MUS enumerator
+print([_/(total_num_files - redundant) for _ in rank_list])
+print([_/(total_num_files - redundant) for _ in hybrid_rank_list])
 print(total_num_files - redundant)
 workbook.close()
 

@@ -5,6 +5,7 @@ import os, glob, math
 result_dir = "initial-8186062.pbs101"
 file_count = 0
 tap = [0] * 4
+rank_list = [0] * 4
 # enumerated = [0] * 4
 timeout = 3600
 par = 2
@@ -59,11 +60,17 @@ for file in glob.glob(result_dir + "/result-*"):
     if ground_truth != None:
         for _ in nmuses:
             assert(_ == ground_truth)
+    # compute rank
+    rank = [sorted(l, reverse = True).index(x) + 1 for x in nmuses]
+    for _, index in enumerate(rank):
+        rank_list[index] += rank[index]
+
     # all heuristic are correct
     assert(len(set(exact_mus)) <= 1)
     file_pointer.close()
 
 print([round(_/file_count,3) for _ in tap]) # computing average TAP score
+print([round(_/file_count,3) for _ in rank_list]) # rank of each solver
 # print(enumerated) # number of exact enumeration 
 print(file_count)
     
