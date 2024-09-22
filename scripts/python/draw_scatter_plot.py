@@ -58,3 +58,47 @@ plt.plot(x1, y1, color = 'green')
 plt.savefig("solution/{0}.pdf".format("tome"), format="pdf")
 plt.clf()
 
+marco_better = 0
+mus_better = 0
+marco_succeed = 0 
+
+for _ in marco:
+    if _[0] == 0 and _[1] > 0:
+        marco_succeed += 1
+        marco_better += 1
+    elif _[0] > _[1]:
+        mus_better += 1
+    elif _[0] < _[1]:
+        marco_better += 1
+
+print(marco_succeed, mus_better, marco_better)
+
+marco_better = 0
+mus_better = 0
+marco_succeed = 0 
+
+for _ in remus:
+    if _[0] == 0 and _[1] > 0:
+        marco_succeed += 1
+        marco_better += 1
+    elif _[0] > _[1]:
+        mus_better += 1
+    elif _[0] < _[1]:
+        marco_better += 1
+
+print(marco_succeed, mus_better, marco_better)
+
+marco_better = 0
+mus_better = 0
+marco_succeed = 0 
+
+for _ in tome:
+    if _[0] == 0 and _[1] > 0:
+        marco_succeed += 1
+        marco_better += 1
+    elif _[0] > _[1]:
+        mus_better += 1
+    elif _[0] < _[1]:
+        marco_better += 1
+
+print(marco_succeed, mus_better, marco_better)

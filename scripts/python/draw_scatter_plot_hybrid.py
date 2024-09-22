@@ -59,3 +59,47 @@ plt.plot(x1, y1, color = 'green')
 plt.savefig("solution/{0}.pdf".format("hybrid_tome"), format="pdf")
 plt.clf()
 
+marco_better = 0
+mus_better = 0
+marco_succeed = 0 
+
+for _ in hybrid_marco:
+    if _[0] == 0 and _[1] > 0:
+        marco_succeed += 1
+        marco_better += 1
+    elif _[0] > _[1]:
+        mus_better += 1
+    elif _[0] <= _[1]:
+        marco_better += 1
+
+print(marco_succeed, mus_better, marco_better)
+
+marco_better = 0
+mus_better = 0
+marco_succeed = 0 
+
+for _ in hybrid_remus:
+    if _[0] == 0 and _[1] > 0:
+        marco_succeed += 1
+        marco_better += 1
+    elif _[0] > _[1]:
+        mus_better += 1
+    elif _[0] <= _[1]:
+        marco_better += 1
+
+print(marco_succeed, mus_better, marco_better)
+
+marco_better = 0
+mus_better = 0
+marco_succeed = 0 
+
+for _ in hybrid_tome:
+    if _[0] == 0 and _[1] > 0:
+        marco_succeed += 1
+        marco_better += 1
+    elif _[0] > _[1]:
+        mus_better += 1
+    elif _[0] <= _[1]:
+        marco_better += 1
+
+print(marco_succeed, mus_better, marco_better)
