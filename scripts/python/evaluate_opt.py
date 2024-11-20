@@ -61,8 +61,8 @@ for file in glob.glob(result_dir + "/result-*"):
         for _ in nmuses:
             assert(_ == ground_truth)
     # compute rank
-    rank = [sorted(l, reverse = True).index(x) + 1 for x in nmuses]
-    for _, index in enumerate(rank):
+    rank = [sorted(nmuses, reverse = True).index(x) + 1 for x in nmuses]
+    for index, _ in enumerate(rank):
         rank_list[index] += rank[index]
 
     # all heuristic are correct

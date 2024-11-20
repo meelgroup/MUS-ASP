@@ -289,16 +289,16 @@ for file in glob.glob(dir_name):
     # compute rank
     l = [marco_count, remus_count, tome_count, clingo_p_count]
     rank = [sorted(l, reverse = True).index(x) + 1 for x in l]
-    for _, index in enumerate(rank):
+    for index, _ in enumerate(rank):
         rank_list[index] += rank[index]
 
     if nclauses < clause_thresh:
-        for _, index in rank:
+        for index, _ in enumerate(rank):
             hybrid_rank_list[index] += 1
     else:
         l = [marco_count, remus_count, tome_count, clingo_p_count]
         rank = [sorted(l, reverse = True).index(x) + 1 for x in l]
-        for _, index in rank:
+        for index, _ in enumerate(rank):
             hybrid_rank_list[index] += rank[index]
 
     compare_remus.append((clingo_p_count,remus_count))

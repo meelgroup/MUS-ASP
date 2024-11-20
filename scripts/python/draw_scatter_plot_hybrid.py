@@ -19,7 +19,7 @@ xlimit = max(max(mus_asp_count), max(marco_count)) + 50
 ylimit = max(max(mus_asp_count), max(marco_count)) + 50
 start = 1
 plt.xlabel("MARCO")
-plt.ylabel("Hybrid")
+plt.ylabel("X+MARCO")
 plt.semilogx()
 plt.semilogy()
 plt.xlim([start, xlimit])
@@ -34,7 +34,7 @@ plt.scatter(remus_count, mus_asp_count, marker='x', s = 40)
 xlimit = max(max(mus_asp_count), max(remus_count)) + 50
 ylimit = max(max(mus_asp_count), max(remus_count)) + 50
 plt.xlabel("ReMUS")
-plt.ylabel("Hybrid")
+plt.ylabel("X+ReMUS")
 plt.semilogx()
 plt.semilogy()
 plt.xlim([start,xlimit])
@@ -49,7 +49,7 @@ plt.scatter(tome_count, mus_asp_count, marker='x', s = 40)
 xlimit = max(max(mus_asp_count), max(tome_count)) + 50
 ylimit = max(max(mus_asp_count), max(tome_count)) + 50
 plt.xlabel("TOME")
-plt.ylabel("Hybrid")
+plt.ylabel("X+TOME")
 plt.semilogx()
 plt.semilogy()
 plt.xlim([start, xlimit])
