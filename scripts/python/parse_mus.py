@@ -54,6 +54,7 @@ tome_index = 3
 mus_asp_index = 4
 redundant = 0
 experiment_timeout = 3600
+mus_asp_count = 0
 par = 2
 clause_thresh = 2500
 
@@ -169,6 +170,7 @@ for file in glob.glob(dir_name):
                 if "+" in line:
                     clingo_p_count = int(l[-1].replace("+", ""))
                 else:
+                    mus_asp_count += 1
                     clingo_p_count = int(l[-1])
                     clingo_p_timeout = False
                 
@@ -333,6 +335,7 @@ print("Clingo enumerated: {0}".format(total_clingo_enumerated))
 print("tome enumerated: {0}".format(total_tome_enumerated))
 print("MARCO enumerated: {0}".format(total_marco_enumerated))
 print("REMUS enumerated: {0}".format(total_remus_enumerated))
+print("MUS-ASP count: {0}".format(mus_asp_count))
 # print(sorted(clingo_mus_count_list))
 # print(sorted(marco_mus_count_list))
 # print(sorted(tome_mus_count_list))
