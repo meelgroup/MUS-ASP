@@ -41,6 +41,7 @@ total_clingo_p_enumerated = 0
 total_marco_enumerated = 0
 total_tome_enumerated = 0
 total_remus_enumerated = 0
+mus_counted = 0
 
 tol = list()
 tap_list = [0,0,0,0,0]
@@ -120,6 +121,8 @@ def log_value(n: int):
 for file in glob.glob(dir_name):
     f = open(file, 'r')
     out_file.write("File: " + file + "\n")
+    if "_refined.cnf" not in file:
+        continue
 
     clingo_count = None
     clingo_time = None
@@ -171,6 +174,7 @@ for file in glob.glob(dir_name):
                 else:
                     clingo_p_count = int(l[-1])
                     clingo_p_timeout = False
+                    mus_counted += 1
                 
                 nmuses[mus_asp_index] = clingo_p_count
         elif line.startswith("Total execution (clock) time in seconds"):
@@ -333,6 +337,7 @@ print("Clingo enumerated: {0}".format(total_clingo_enumerated))
 print("tome enumerated: {0}".format(total_tome_enumerated))
 print("MARCO enumerated: {0}".format(total_marco_enumerated))
 print("REMUS enumerated: {0}".format(total_remus_enumerated))
+print("MUS-ASP counted: {0}".format(mus_counted))
 # print(sorted(clingo_mus_count_list))
 # print(sorted(marco_mus_count_list))
 # print(sorted(tome_mus_count_list))
