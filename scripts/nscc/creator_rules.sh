@@ -86,7 +86,7 @@ do
             todo="unxz ${filename}"
             echo "$todo" >> todo
 
-            todo="/usr/bin/time --verbose -o clingo_${aspfile}.timeout clingo --enum-mode=domRec --heuristic=domain -n 0 -q --time-limit=1800 ${aspfile} >> result-${aspfile}.out 2>&1"
+            todo="/usr/bin/time --verbose -o clingo_${aspfile}.timeout clingo --dom-mod=false,show --enum-mode=domRec --heuristic=domain -n 0 -q --time-limit=1800 ${aspfile} >> result-${aspfile}.out 2>&1"
             echo "$todo" >> todo
 
             todo="mkdir -p ${PBS_O_WORKDIR}//${output}"
