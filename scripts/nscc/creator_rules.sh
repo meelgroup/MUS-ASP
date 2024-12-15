@@ -8,10 +8,10 @@ rm -f todo
 touch todo
 solver="sharpSAT"
 
-opts_arr=(" -t 5000 -cs 2000 ")
+opts_arr=("2" "3" "4")
 
 output="initial"
-tlimit="1800"
+tlimit="5000"
 #4GB mem limit
 memlimit="16000000"
 numthreads=$((OMPI_COMM_WORLD_SIZE))
@@ -53,10 +53,11 @@ mkdir -p "${WORKDIR}"
 cd "${WORKDIR}" || exit
 
 #files=$(ls ${PBS_O_WORKDIR}//${filespos}/credit_*.wcnf ${PBS_O_WORKDIR}//${filespos}/adult_*.wcnf ${PBS_O_WORKDIR}//${filespos}/connect_*.wcnf ${PBS_O_WORKDIR}//${filespos}/bank_*.wcnf | shuf --random-source=${PBS_O_WORKDIR}//myrnd)
-files=$(ls ${PBS_O_WORKDIR}//${filespos}/*.xz | shuf --random-source=${PBS_O_WORKDIR}//myrnd)
+files=$(ls ${PBS_O_WORKDIR}//${filespos}/*.csv | shuf --random-source=${PBS_O_WORKDIR}//myrnd)
 #files=$(ls  ${PBS_O_WORKDIR}//${filespos}/*.wcnf | shuf --random-source=${PBS_O_WORKDIR}//myrnd)
 cp ${PBS_O_WORKDIR}//clingo .
 cp ${PBS_O_WORKDIR}//gringo .
+cp -r ${PBS_O_WORKDIR}//minds/* .
 
 # an example run
 # todo="/usr/bin/time ./stream-maxsat_static -epsilon=0.25 -percentile=0.6 -Rvalue=5 -Fvalue=5 -timeout=5000 -small-timeout=100 ${filename} >> result-${filename}.out 2>&1"
@@ -83,16 +84,19 @@ do
             todo="cp ${PBS_O_WORKDIR}//${filespos}/${filename} ."
             echo "$todo" >> todo
 
-            todo="unxz ${filename}"
+            # todo="unxz ${filename}"
+            # echo "$todo" >> todo
+
+            todo="/usr/bin/time --verbose -o dlp_${filename}-${opts}.timeout ~/anaconda3/envs/potassco/bin/python tool/mds.py -a 2stage -C mxsat -v -r ${opts} -p dlp ${filename} >> result-${filename}-${opts}.out 2>&1"
             echo "$todo" >> todo
 
-            todo="/usr/bin/time --verbose -o clingo_${aspfile}.timeout clingo --dom-mod=false,show --enum-mode=domRec --heuristic=domain -n 0 -q --time-limit=1800 ${aspfile} >> result-${aspfile}.out 2>&1"
+            todo="/usr/bin/time --verbose -o mxsat_${filename}-${opts}.timeout ~/anaconda3/envs/potassco/bin/python tool/mds.py -a 2stage -C mxsat -v -r ${opts} -p mxsat ${filename} >> result-${filename}-${opts}.out 2>&1"
             echo "$todo" >> todo
 
             todo="mkdir -p ${PBS_O_WORKDIR}//${output}"
             echo "$todo" >> todo
 
-            todo="mv clingo_${aspfile}.timeout result-${aspfile}.out ${PBS_O_WORKDIR}//${output}"
+            todo="mv dlp_${filename}-${opts}.timeout mxsat_${filename}-${opts}.timeout result-${filename}-${opts}.out ${PBS_O_WORKDIR}//${output}"
             echo "$todo" >> todo
 
             numlines=$((numlines+1))
