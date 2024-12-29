@@ -1,6 +1,6 @@
 #!/bin/bash
 
-filespos="refined/"
+filespos="random/"
 
 ulimit -t unlimited
 shopt -s nullglob
@@ -53,7 +53,7 @@ mkdir -p "${WORKDIR}"
 cd "${WORKDIR}" || exit
 
 #files=$(ls ${PBS_O_WORKDIR}//${filespos}/credit_*.wcnf ${PBS_O_WORKDIR}//${filespos}/adult_*.wcnf ${PBS_O_WORKDIR}//${filespos}/connect_*.wcnf ${PBS_O_WORKDIR}//${filespos}/bank_*.wcnf | shuf --random-source=${PBS_O_WORKDIR}//myrnd)
-files=$(ls ${PBS_O_WORKDIR}//${filespos}/m* | shuf --random-source=${PBS_O_WORKDIR}//myrnd)
+files=$(ls ${PBS_O_WORKDIR}//random/*.cnf ${PBS_O_WORKDIR}//coloring/*.cnf | shuf --random-source=${PBS_O_WORKDIR}//myrnd)
 #files=$(ls  ${PBS_O_WORKDIR}//${filespos}/*.wcnf | shuf --random-source=${PBS_O_WORKDIR}//myrnd)
 cp ${PBS_O_WORKDIR}//clingo .
 cp ${PBS_O_WORKDIR}//compute_to_mus.py .
@@ -88,7 +88,7 @@ do
         then
 
             #copy and unzip
-            todo="cp ${PBS_O_WORKDIR}//${filespos}/${filename} ."
+            todo="cp ${file} ."
             echo "$todo" >> todo
 
             todo="python compute_to_mus.py -i ${filename} >> result-${filename}.out 2>&1"
@@ -106,10 +106,10 @@ do
             todo="~/anaconda3/envs/kc/bin/python check_num_of_mus.py -i ${filename} -a marco >> result-${filename}.out 2>&1"
             echo "$todo" >> todo
 
-            todo="/usr/bin/time --verbose -o tome_${filename}.timeout ./must -a tome ${filename} >> tome-${filename}.out 2>&1"
+            todo="/usr/bin/time --verbose -o unimus_${filename}.timeout ./unimus -a unimus ${filename} >> unimus-${filename}.out 2>&1"
             echo "$todo" >> todo
 
-            todo="~/anaconda3/envs/kc/bin/python check_num_of_mus.py -i ${filename} -a tome >> result-${filename}.out 2>&1"
+            todo="~/anaconda3/envs/kc/bin/python check_num_of_mus.py -i ${filename} -a unimus >> result-${filename}.out 2>&1"
             echo "$todo" >> todo
 
             todo="/usr/bin/time --verbose -o remus_${filename}.timeout ./must -a remus ${filename} >> remus-${filename}.out 2>&1"
@@ -169,10 +169,10 @@ do
             todo="~/anaconda3/envs/kc/bin/python check_num_of_mus.py -i ${filename} -a marco >> result-${filename}.out 2>&1"
             echo "$todo" >> todo
 
-            todo="/usr/bin/time --verbose -o tome_${filename}.timeout ./must -a tome ${filename} >> tome-${filename}.out 2>&1"
+            todo="/usr/bin/time --verbose -o unimus_${filename}.timeout ./unimus -a unimus ${filename} >> unimus-${filename}.out 2>&1"
             echo "$todo" >> todo
 
-            todo="~/anaconda3/envs/kc/bin/python check_num_of_mus.py -i ${filename} -a tome >> result-${filename}.out 2>&1"
+            todo="~/anaconda3/envs/kc/bin/python check_num_of_mus.py -i ${filename} -a unimus >> result-${filename}.out 2>&1"
             echo "$todo" >> todo
 
             todo="/usr/bin/time --verbose -o remus_${filename}.timeout ./must -a remus ${filename} >> remus-${filename}.out 2>&1"
