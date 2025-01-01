@@ -59,6 +59,7 @@ cp ${PBS_O_WORKDIR}//clingo .
 cp ${PBS_O_WORKDIR}//compute_to_mus.py .
 cp ${PBS_O_WORKDIR}//check_num_of_mus.py .
 cp -r ${PBS_O_WORKDIR}//counter/* .
+cp -r ${PBS_O_WORKDIR}//wrappers/* .
 cp ${PBS_O_WORKDIR}//gringo .
 
 # an example run
@@ -85,7 +86,16 @@ do
             todo="cp ${PBS_O_WORKDIR}//${filespos}/${filename} ."
             echo "$todo" >> todo
 
-            todo="/usr/bin/time --verbose -o count_${filename}.timeout ~/anaconda3/envs/kc/bin/python counter.py ${filename} > result-${filename}.out 2>&1"
+            todo="python compute_to_mus.py -i ${filename} >> result-${filename}.out 2>&1"
+            echo "$todo" >> todo
+
+            todo="/usr/bin/time --verbose -o count_${filename}.timeout ~/anaconda3/envs/kc/bin/python counter.py ${filename} >> result-${filename}.out 2>&1"
+            echo "$todo" >> todo
+
+            todo="/usr/bin/time --verbose -o wrapper_${filename}.timeout ~/anaconda3/envs/kc/bin/python heuristic.py ${filename} >> result-${filename}.out 2>&1"
+            echo "$todo" >> todo
+
+            todo="/usr/bin/time --verbose -o mus_${filename}.timeout clingo --enum-mode=domRec --heuristic=domain -n 0 -q --time-limit=3600 mus_${filename} >> result-${filename}.out 2>&1"
             echo "$todo" >> todo
 
             todo="mkdir -p ${PBS_O_WORKDIR}//${output}"
@@ -99,7 +109,7 @@ do
     done
     let at_opt=at_opt+1
 done
-todoper=4
+todoper=7
 
 # create per-core todos
 echo "The total number of benchmarks: $numlines"
