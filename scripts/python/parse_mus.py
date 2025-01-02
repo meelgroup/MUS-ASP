@@ -339,11 +339,6 @@ print("Clingo enumerated: {0}".format(total_clingo_enumerated))
 print("tome enumerated: {0}".format(total_tome_enumerated))
 print("MARCO enumerated: {0}".format(total_marco_enumerated))
 print("REMUS enumerated: {0}".format(total_remus_enumerated))
-<<<<<<< HEAD
-print("MUS-ASP counted: {0}".format(mus_counted))
-=======
-print("MUS-ASP count: {0}".format(mus_asp_count))
->>>>>>> 0e9051337ddba7e030a31bbfc709a8a1d577d101
 # print(sorted(clingo_mus_count_list))
 # print(sorted(marco_mus_count_list))
 # print(sorted(tome_mus_count_list))
