@@ -53,7 +53,7 @@ mkdir -p "${WORKDIR}"
 cd "${WORKDIR}" || exit
 
 #files=$(ls ${PBS_O_WORKDIR}//${filespos}/credit_*.wcnf ${PBS_O_WORKDIR}//${filespos}/adult_*.wcnf ${PBS_O_WORKDIR}//${filespos}/connect_*.wcnf ${PBS_O_WORKDIR}//${filespos}/bank_*.wcnf | shuf --random-source=${PBS_O_WORKDIR}//myrnd)
-files=$(ls ${PBS_O_WORKDIR}//${filespos}/m* | shuf --random-source=${PBS_O_WORKDIR}//myrnd)
+files=$(ls ${PBS_O_WORKDIR}//random/*.cnf ${PBS_O_WORKDIR}//coloring/*.cnf | shuf --random-source=${PBS_O_WORKDIR}//myrnd)
 #files=$(ls  ${PBS_O_WORKDIR}//${filespos}/*.wcnf | shuf --random-source=${PBS_O_WORKDIR}//myrnd)
 cp ${PBS_O_WORKDIR}//clingo .
 cp ${PBS_O_WORKDIR}//compute_to_mus.py .
@@ -84,11 +84,11 @@ do
         filename=$(basename "$file")
         # filename=$(basename "$file")
         # does the file run earlier
-        if [[ ! -f "${PBS_O_WORKDIR}/$resultDir/result-$filename.out" ]]
+        if [[ ! -f "${PBS_O_WORKDIR}/$resultDir/result-${filename}.out" ]]
         then
 
             #copy and unzip
-            todo="cp ${PBS_O_WORKDIR}//${filespos}/${filename} ."
+            todo="cp ${file} ."
             echo "$todo" >> todo
 
             todo="python compute_to_mus.py -i ${filename} >> result-${filename}.out 2>&1"

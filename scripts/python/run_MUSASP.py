@@ -14,7 +14,7 @@ if args.heu != None:
 if args.p != None:
     python_dir = 'python'
 
-os.system('/usr/bin/time --verbose -o heu_{2}.timeout {0} counter.py {1} {2} >> heuristic-{2}.out 2>&1'.format(python_dir, heuristic, args.i))
+os.system('/usr/bin/time --verbose -o heu_{2}.timeout {0} heuristic.py {1} {2} >> heuristic-{2}.out 2>&1'.format(python_dir, heuristic, args.i))
 
 out_file = open('heuristic-{0}.out'.format(args.i))
 total_time = 3600
