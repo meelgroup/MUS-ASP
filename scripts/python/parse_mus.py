@@ -1,6 +1,6 @@
 import glob, os, json, subprocess, math
 
-res_dir = "initial-8120825.pbs101" # it contains all baseline results
+res_dir = "initial-9075553.pbs101" # it contains all baseline results
 # res_dir = "initial-8186374.pbs101" # random benchmarks 
 output_file = "output/" + res_dir + ".out"
 summary_file = "output/summary_" + res_dir + ".out"
@@ -57,7 +57,7 @@ redundant = 0
 experiment_timeout = 3600
 mus_asp_count = 0
 par = 2
-clause_thresh = 2500
+clause_thresh = 5000
 
 output_mismatch = 0
 output_checked = 0
@@ -122,8 +122,6 @@ def log_value(n: int):
 for file in glob.glob(dir_name):
     f = open(file, 'r')
     out_file.write("File: " + file + "\n")
-    if "_refined.cnf" not in file:
-        continue
 
     clingo_count = None
     clingo_time = None
@@ -154,6 +152,7 @@ for file in glob.glob(dir_name):
     nmuses = [None] * 5
     ntimes = [0] * 5
     total_num_files += 1
+    size = None
     for line in f:
         if line.startswith("CPU Time"):
             l = line.split()
@@ -182,13 +181,13 @@ for file in glob.glob(dir_name):
         elif line.startswith("Total execution (clock) time in seconds"):
             l = line.split()
             clingo_preprocessing_time = float(l[-1])
-        elif line.startswith("=> tome Complete enumeration: False"):
+        elif line.startswith("=> unimus Complete enumeration: False"):
             tome_timeout = True
         elif line.startswith("=> marco Complete enumeration: False"):
             marco_timeout = True
         elif line.startswith("=> remus Complete enumeration: False"):
             remus_timeout = True
-        elif line.startswith("=> tome The number of MUS:"):
+        elif line.startswith("=> unimus The number of MUS:"):
             l = line.split()
             tome_count = int(l[-1])
             
@@ -203,13 +202,15 @@ for file in glob.glob(dir_name):
             remus_count = int(l[-1])
             
             nmuses[remus_index] = remus_count
-
+        elif line.startswith("autarky size"): 
+            l = line.split()
+            size = int(l[-2])
 
     clingo_p_time = get_time(file, "mus") + clingo_preprocessing_time
     ntimes[mus_asp_index] = clingo_p_time
     clingo_time = get_time(file, "clingo")
     ntimes[clingo_index] = clingo_time
-    tome_time = get_time(file, "tome")
+    tome_time = get_time(file, "unimus")
     ntimes[tome_index] = tome_time
     marco_time = get_time(file, "marco")
     ntimes[marco_index] = marco_time
@@ -228,10 +229,10 @@ for file in glob.glob(dir_name):
     if total_num_files % 100 == 0:
         print("{0} files processed".format(total_num_files))
     
-    if None not in nmuses and 0 not in nmuses and len(set(nmuses)) == 1:
-        # print(file, nmuses)
-        redundant += 1
-        continue
+    # if None not in nmuses and 0 not in nmuses and len(set(nmuses)) == 1:
+    #     # print(file, nmuses)
+    #     redundant += 1
+    #     continue
     
     remus_mus_count_list.append(log_value(remus_count))
     marco_mus_count_list.append(log_value(marco_count))
@@ -273,7 +274,7 @@ for file in glob.glob(dir_name):
     else:
         total_remus_time += par * experiment_timeout
 
-    nclauses = number_of_constraint(file)
+    nclauses = size
     min_count = None
     for _ in nmuses:
         if min_count == None or min_count > _:
@@ -344,12 +345,21 @@ print("REMUS enumerated: {0}".format(total_remus_enumerated))
 # print(sorted(tome_mus_count_list))
 # print(sorted(clingo_p_mus_count_list))
 # print(sorted(remus_mus_count_list))
-print("marco = ", compare_marco)
-print("remus = ", compare_remus)
-print("tome = ", compare_tome)
-print("hybrid_marco = ", compare_hybrid_marco)
-print("hybrid_remus = ", compare_hybrid_remus)
-print("hybrid_tome = ", compare_hybrid_tome)
+output = dict()
+output["marco"] = compare_marco
+output["remus"] = compare_remus
+output["unimus"] = compare_tome
+output["hybrid_marco"] = compare_hybrid_marco
+output["hybrid_remus"] = compare_hybrid_remus
+output["hybrid_unimus"] = compare_hybrid_tome
+with open('output_mus.json', 'w') as f:
+    json.dump(output, f, indent=4)
+# print("marco = ", compare_marco)
+# print("remus = ", compare_remus)
+# print("unimus = ", compare_tome)
+# print("hybrid_marco = ", compare_hybrid_marco)
+# print("hybrid_remus = ", compare_hybrid_remus)
+# print("hybrid_unimus = ", compare_hybrid_tome)
 print("Clingo PAR-2 score: {0}".format(total_clingo_time/total_num_files))
 print("Clingo + Prep PAR-2 score: {0}".format(total_clingo_p_time/total_num_files))
 print("MARCO PAR-2 score: {0}".format(total_marco_time/total_num_files))
