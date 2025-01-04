@@ -60,6 +60,7 @@ cp ${PBS_O_WORKDIR}//compute_to_mus.py .
 cp ${PBS_O_WORKDIR}//check_num_of_mus.py .
 cp -r ${PBS_O_WORKDIR}//counter/* .
 cp -r ${PBS_O_WORKDIR}//wrappers/* .
+cp -r ${PBS_O_WORKDIR}//amusic/* .
 cp ${PBS_O_WORKDIR}//gringo .
 
 # an example run
@@ -98,6 +99,9 @@ do
             todo="/usr/bin/time --verbose -o mus_${filename}.timeout clingo --enum-mode=domRec --heuristic=domain -n 0 -q --time-limit=3600 mus_${filename} >> result-${filename}.out 2>&1"
             echo "$todo" >> todo
 
+            todo="/usr/bin/time --verbose -o amusic_${filename}.timeout ~/anaconda3/envs/kc/bin/python amusic.py --qbf2 ${filename} >> result-${filename}.out 2>&1"
+            echo "$todo" >> todo
+
             todo="mkdir -p ${PBS_O_WORKDIR}//${output}"
             echo "$todo" >> todo
 
@@ -109,7 +113,7 @@ do
     done
     let at_opt=at_opt+1
 done
-todoper=7
+todoper=8
 
 # create per-core todos
 echo "The total number of benchmarks: $numlines"
