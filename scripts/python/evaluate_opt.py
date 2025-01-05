@@ -2,7 +2,7 @@ import os
 import os, glob, math
 
 # result_dir = "initial-8101398.pbs101"
-result_dir = "initial-8186062.pbs101"
+result_dir = "initial-9121526.pbs101"
 file_count = 0
 tap = [0] * 4
 rank_list = [0] * 4
