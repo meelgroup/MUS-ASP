@@ -2,10 +2,12 @@ import os
 import os, glob, math
 
 # result_dir = "initial-8101398.pbs101"
-result_dir = "initial-9121526.pbs101"
+result_dir = "initial-9139098.pbs101"
 file_count = 0
 tap = [0] * 4
 rank_list = [0] * 4
+nsolved = [0] * 4
+npar2 = [0] * 4
 # enumerated = [0] * 4
 timeout = 3600
 par = 2
@@ -15,6 +17,7 @@ for file in glob.glob(result_dir + "/result-*"):
     file_pointer = open(file)
     nmuses = []
     exact_mus = []
+    solved = False
     ntimes = [] 
     nproc = [] 
     ground_truth = None
@@ -25,14 +28,22 @@ for file in glob.glob(result_dir + "/result-*"):
             if "+" not in l[-1].strip():
                 # enumerated[len(nmuses)] = enumerated[len(nmuses)] + 1
                 exact_mus.append(int(l[-1].replace("+", "")))
+                nsolved[len(nmuses)] += 1
+                solved = True
                 if len(nmuses) == 0:
                     # non heuristic number of muses
                     ground_truth = int(l[-1].replace("+", ""))
+            else:
+                solved = False
             nmuses.append(int(l[-1].replace("+", "")))
 
         elif line.startswith("CPU Time"):
             l = line.split()
             ntimes.append(float(l[-1].replace("s", "")))
+            if solved: 
+                npar2[len(nmuses) - 1] += ntimes[-1]
+            else:
+                npar2[len(nmuses) - 1] += par * timeout
         elif line.startswith("Time spent in heuristic"):
             l = line.split()
             nproc.append(float(l[-1]))
@@ -73,4 +84,5 @@ print([round(_/file_count,3) for _ in tap]) # computing average TAP score
 print([round(_/file_count,3) for _ in rank_list]) # rank of each solver
 # print(enumerated) # number of exact enumeration 
 print(file_count)
-    
+print(nsolved)
+print([round(_/file_count,3) for _ in npar2])
