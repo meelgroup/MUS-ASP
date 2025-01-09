@@ -99,8 +99,8 @@ do
             todo="/usr/bin/time --verbose -o mus_${filename}.timeout clingo --enum-mode=domRec --heuristic=domain -n 0 -q --time-limit=3600 mus_${filename} >> result-${filename}.out 2>&1"
             echo "$todo" >> todo
 
-            todo="/usr/bin/time --verbose -o amusic_${filename}.timeout ~/anaconda3/envs/kc/bin/python amusic.py --qbf2 ${filename} >> result-${filename}.out 2>&1"
-            echo "$todo" >> todo
+            # todo="./runsolver -W ${tlimit} -o result-${filename}.out ~/anaconda3/envs/kc/bin/python amusic.py --qbf2 ${filename} > amusic_${filename}.timeout"
+            # echo "$todo" >> todo
 
             todo="mkdir -p ${PBS_O_WORKDIR}//${output}"
             echo "$todo" >> todo
@@ -113,7 +113,7 @@ do
     done
     let at_opt=at_opt+1
 done
-todoper=8
+todoper=7
 
 # create per-core todos
 echo "The total number of benchmarks: $numlines"
