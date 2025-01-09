@@ -102,6 +102,12 @@ do
             # todo="./runsolver -W ${tlimit} -o result-${filename}.out ~/anaconda3/envs/kc/bin/python amusic.py --qbf2 ${filename} > amusic_${filename}.timeout"
             # echo "$todo" >> todo
 
+            # todo="/usr/bin/time --verbose -o unimus_${filename}.timeout ./unimus -a unimus ${filename} >> unimus-${filename}.out 2>&1"
+            # echo "$todo" >> todo
+
+            # todo="~/anaconda3/envs/kc/bin/python check_num_of_mus.py -i ${filename} -a unimus >> result-${filename}.out 2>&1"
+            # echo "$todo" >> todo
+
             todo="mkdir -p ${PBS_O_WORKDIR}//${output}"
             echo "$todo" >> todo
 
