@@ -2,6 +2,7 @@ import glob, os, json, subprocess, math
 import matplotlib.pyplot as plt
 
 res_dir = "initial-9097461.pbs101" # it contains all baseline results
+res_dir = "initial-9195896.pbs101" # it contains unimus results
 # res_dir = "initial-8186374.pbs101" # random benchmarks 
 output_file = "output/" + res_dir + ".out"
 summary_file = "output/summary_" + res_dir + ".out"
@@ -23,9 +24,11 @@ worksheet.write(0, 5, "CountMUST T.")
 total_num_files = 0
 total_clingo_time = 0
 total_countmust_time = 0
+total_unimus_time = 0
 
 total_clingo_timeout = 0
 total_countmust_timeout = 0
+total_unimus_timeout = 0
 
 total_clingo_enumerated = 0
 total_countmust_enumerated = 0
@@ -48,6 +51,17 @@ clingo_solver = {
         "prog_args": "-a hello --arg2 world -v",
         "program": "MUS-ASP",
         "prog_alias": "MUS-ASP"
+    }
+}
+
+unimus_solver = {
+    "stats": {
+    },
+    "preamble": {
+        "benchmark": "my-benchmark-set",
+        "prog_args": "-a hello --arg2 world -v",
+        "program": "UNIMUS",
+        "prog_alias": "UNIMUS"
     }
 }
 
@@ -86,6 +100,10 @@ for file in glob.glob(dir_name):
 
     countmust_count = None
     countmust_time = None
+
+    unimus_count = None
+    unimus_time = None
+    unimus_timeout = True
     clingo_preprocessing_time = None
     size = None
     
@@ -111,6 +129,11 @@ for file in glob.glob(dir_name):
             else:
                 l = line.split()
                 clingo_preprocessing_time = float(l[-1])
+        elif line.startswith("=> unimus Complete enumeration: True"):
+            unimus_timeout = False
+        elif line.startswith("The last time of enumeration:"):
+            l = line.split()
+            unimus_time = float(l[-1])
         elif line.startswith("autarky size"): 
             l = line.split()
             size = int(l[-2])
@@ -129,6 +152,19 @@ for file in glob.glob(dir_name):
             "status": 1,
             "rtime": clingo_time + clingo_preprocessing_time
         }
+    # if unimus_timeout == True:
+    #     total_unimus_timeout += 1
+    #     total_unimus_time += par * experiment_timeout 
+    #     unimus_solver["stats"]["{0}".format(total_num_files)] = {
+    #         "status": 0,
+    #         "rtime": experiment_timeout
+    #     }
+    # else:
+    #     total_unimus_time += unimus_time
+    #     unimus_solver["stats"]["{0}".format(total_num_files)] = {
+    #         "status": 1,
+    #         "rtime": unimus_time
+    #     }
     if countmust_count == -1:
         total_countmust_timeout += 1
         total_countmust_time += par * experiment_timeout
@@ -171,8 +207,8 @@ for file in glob.glob(dir_name):
         
 
 print("Number of input checked: {0}".format(output_checked))
-print("Clingo timeout: {0} ({1}) countmust timeout: {2} ({3})".format(total_clingo_timeout, total_num_files - total_clingo_timeout, total_countmust_timeout, total_num_files - total_countmust_timeout))
-print("Clingo PAR-2: {0} countmust PAR-2: {1}".format(total_clingo_time/total_num_files, total_countmust_time/total_num_files))
+print("Clingo timeout: {0} ({1}) countmust timeout: {2} ({3}) unimus timeout: {4} ({5})".format(total_clingo_timeout, total_num_files - total_clingo_timeout, total_countmust_timeout, total_num_files - total_countmust_timeout, total_unimus_timeout, total_num_files - total_unimus_timeout))
+print("Clingo PAR-2: {0} countmust PAR-2: {1} unimus PAR-2: {2}".format(total_clingo_time/total_num_files, total_countmust_time/total_num_files, total_unimus_time/total_num_files))
 
 
 workbook.close()
@@ -193,6 +229,11 @@ with open('solver1.json', 'w') as f:
     json.dump(clingo_solver, f, indent=4)
 with open('solver2.json', 'w') as f:
     json.dump(countmust_solver, f, indent=4)
+with open('solver3.json', 'w') as f:
+    json.dump(unimus_solver, f, indent=4)
+
+# Clingo timeout: 0 (1097) countmust timeout: 0 (1097) unimus timeout: 832 (265)
+# Clingo PAR-2: 0.0 countmust PAR-2: 0.0 unimus PAR-2: 5463.414953329991
     
 
     
