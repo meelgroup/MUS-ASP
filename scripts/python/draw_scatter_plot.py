@@ -46,7 +46,7 @@ plt.scatter(tome_count, mus_asp_count, marker='x', s = 40)
 
 xlimit = max(max(mus_asp_count), max(tome_count)) + 50
 ylimit = max(max(mus_asp_count), max(tome_count)) + 50
-plt.xlabel("TOME")
+plt.xlabel("UNIMUS")
 plt.ylabel("MUS-ASP")
 plt.semilogx()
 plt.semilogy()
@@ -54,7 +54,7 @@ plt.xlim([start, xlimit])
 plt.ylim([start, ylimit])
 x1, y1 = [start, max(xlimit, ylimit)], [start, max(xlimit, ylimit)]
 plt.plot(x1, y1, color = 'green')
-plt.savefig("solution/{0}.pdf".format("tome"), format="pdf")
+plt.savefig("solution/{0}.pdf".format("unimus"), format="pdf")
 plt.clf()
 
 marco_better = 0

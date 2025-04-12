@@ -57,7 +57,7 @@ plt.xlim([start, xlimit])
 plt.ylim([start, ylimit])
 x1, y1 = [start, max(xlimit, ylimit)], [start, max(xlimit, ylimit)]
 plt.plot(x1, y1, color = 'green')
-plt.savefig("solution/{0}.pdf".format("hybrid_tome"), format="pdf")
+plt.savefig("solution/{0}.pdf".format("hybrid_unimus"), format="pdf")
 plt.clf()
 
 marco_better = 0
