@@ -1,9 +1,10 @@
 import glob, os, json, subprocess, math
 import matplotlib.pyplot as plt
 
-res_dir = "initial-9097461.pbs101" # it contains all baseline results
-res_dir = "initial-9195896.pbs101" # it contains unimus results
+# res_dir = "initial-9097461.pbs101" # it contains all baseline results
+# res_dir = "initial-9195896.pbs101" # it contains unimus results
 # res_dir = "initial-8186374.pbs101" # random benchmarks 
+res_dir = "combined"
 output_file = "output/" + res_dir + ".out"
 summary_file = "output/summary_" + res_dir + ".out"
 dir_name = res_dir + "/" + "result-*"
@@ -42,6 +43,9 @@ output_checked = 0
 
 clingo_mus_time_list = []
 countmust_mus_time_list = []
+clingo_mus_count_list = []
+countmust_mus_count_list = []
+unimus_mus_count_list = []
 
 clingo_solver = {
     "stats": {
@@ -130,10 +134,16 @@ for file in glob.glob(dir_name):
                 l = line.split()
                 clingo_preprocessing_time = float(l[-1])
         elif line.startswith("=> unimus Complete enumeration: True"):
+            # unimus_count == clingo_count means that unimus computed all MUSes
             unimus_timeout = False
         elif line.startswith("The last time of enumeration:"):
             l = line.split()
             unimus_time = float(l[-1])
+        elif line.startswith("=> unimus The number of MUS"):
+            l = line.split()
+            unimus_count = int(l[-1])
+            if unimus_count == countmust_count:
+                unimus_timeout = False
         elif line.startswith("autarky size"): 
             l = line.split()
             size = int(l[-2])
@@ -152,20 +162,22 @@ for file in glob.glob(dir_name):
             "status": 1,
             "rtime": clingo_time + clingo_preprocessing_time
         }
-    # if unimus_timeout == True:
-    #     total_unimus_timeout += 1
-    #     total_unimus_time += par * experiment_timeout 
-    #     unimus_solver["stats"]["{0}".format(total_num_files)] = {
-    #         "status": 0,
-    #         "rtime": experiment_timeout
-    #     }
-    # else:
-    #     total_unimus_time += unimus_time
-    #     unimus_solver["stats"]["{0}".format(total_num_files)] = {
-    #         "status": 1,
-    #         "rtime": unimus_time
-    #     }
-    if countmust_count == -1:
+        clingo_mus_count_list.append(log_value(clingo_count))
+    if unimus_timeout == True:
+        total_unimus_timeout += 1
+        total_unimus_time += par * experiment_timeout 
+        unimus_solver["stats"]["{0}".format(total_num_files)] = {
+            "status": 0,
+            "rtime": experiment_timeout
+        }
+    else:
+        total_unimus_time += unimus_time
+        unimus_solver["stats"]["{0}".format(total_num_files)] = {
+            "status": 1,
+            "rtime": unimus_time
+        }
+        unimus_mus_count_list.append(log_value(unimus_count))
+    if countmust_count == -1 or countmust_count == None:
         total_countmust_timeout += 1
         total_countmust_time += par * experiment_timeout
         countmust_solver["stats"]["{0}".format(total_num_files)] = {
@@ -178,6 +190,7 @@ for file in glob.glob(dir_name):
             "status": 1,
             "rtime": countmust_time
         }
+        countmust_mus_count_list.append(log_value(countmust_count))
 
     if clingo_timeout == False and countmust_count > -1:
         assert(clingo_count == countmust_count)
@@ -225,11 +238,22 @@ workbook.close()
 # plt.savefig("solution/{0}.pdf".format("count_mus"), format="pdf")
 # plt.clf()
 
-with open('solver1.json', 'w') as f:
+plt.plot(sorted(countmust_mus_count_list), linestyle = 'solid', label = "CountMUST")
+plt.plot(sorted(clingo_mus_count_list), linestyle = 'solid', label = "MUS-ASP")
+plt.plot(sorted(unimus_mus_count_list), linestyle = 'solid', label = "UNIMUS")
+plt.ylabel("MUS Count", fontsize=14)
+plt.xlabel("instances", fontsize=14)
+plt.xlim([0, 1000])
+plt.ylim([0, 6])
+plt.legend(fontsize = 12)
+# plt.savefig("solution/{0}.pdf".format("circum"), format = 'pdf')
+plt.savefig("solution/{0}.pdf".format(res_dir), format = 'pdf')
+
+with open('counter1.json', 'w') as f:
     json.dump(clingo_solver, f, indent=4)
-with open('solver2.json', 'w') as f:
+with open('counter2.json', 'w') as f:
     json.dump(countmust_solver, f, indent=4)
-with open('solver3.json', 'w') as f:
+with open('counter3.json', 'w') as f:
     json.dump(unimus_solver, f, indent=4)
 
 # Clingo timeout: 0 (1097) countmust timeout: 0 (1097) unimus timeout: 832 (265)
