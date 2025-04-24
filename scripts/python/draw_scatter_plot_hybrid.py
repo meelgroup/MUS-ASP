@@ -20,7 +20,7 @@ xlimit = max(max(mus_asp_count), max(marco_count)) + 50
 ylimit = max(max(mus_asp_count), max(marco_count)) + 50
 start = 1
 plt.xlabel("MARCO")
-plt.ylabel("X+MARCO")
+plt.ylabel("X+MUS-ASP")
 plt.semilogx()
 plt.semilogy()
 plt.xlim([start, xlimit])
@@ -35,7 +35,7 @@ plt.scatter(remus_count, mus_asp_count, marker='x', s = 40)
 xlimit = max(max(mus_asp_count), max(remus_count)) + 50
 ylimit = max(max(mus_asp_count), max(remus_count)) + 50
 plt.xlabel("ReMUS")
-plt.ylabel("X+ReMUS")
+plt.ylabel("X+MUS-ASP")
 plt.semilogx()
 plt.semilogy()
 plt.xlim([start,xlimit])
@@ -50,14 +50,14 @@ plt.scatter(tome_count, mus_asp_count, marker='x', s = 40)
 xlimit = max(max(mus_asp_count), max(tome_count)) + 50
 ylimit = max(max(mus_asp_count), max(tome_count)) + 50
 plt.xlabel("UNIMUS")
-plt.ylabel("X+UNIMUS")
+plt.ylabel("X+MUS-ASP")
 plt.semilogx()
 plt.semilogy()
 plt.xlim([start, xlimit])
 plt.ylim([start, ylimit])
 x1, y1 = [start, max(xlimit, ylimit)], [start, max(xlimit, ylimit)]
 plt.plot(x1, y1, color = 'green')
-plt.savefig("solution/{0}.pdf".format("hybrid_tome"), format="pdf")
+plt.savefig("solution/{0}.pdf".format("hybrid_unimus"), format="pdf")
 plt.clf()
 
 marco_better = 0
