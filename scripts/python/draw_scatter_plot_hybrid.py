@@ -30,6 +30,7 @@ plt.plot(x1, y1, color = 'green')
 plt.savefig("solution/{0}.pdf".format("hybrid_marco"), format="pdf")
 plt.clf()
 
+mus_asp_count = [_[0] if _[0] != 0 else 1 for _ in output['hybrid_remus']]
 plt.scatter(remus_count, mus_asp_count, marker='x', s = 40)
 
 xlimit = max(max(mus_asp_count), max(remus_count)) + 50
@@ -45,6 +46,7 @@ plt.plot(x1, y1, color = 'green')
 plt.savefig("solution/{0}.pdf".format("hybrid_remus"), format="pdf")
 plt.clf()
 
+mus_asp_count = [_[0] if _[0] != 0 else 1 for _ in output['hybrid_unimus']]
 plt.scatter(tome_count, mus_asp_count, marker='x', s = 40)
 
 xlimit = max(max(mus_asp_count), max(tome_count)) + 50
